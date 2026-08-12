@@ -14,6 +14,9 @@
   header h1{font-size:1.15rem;font-weight:700;letter-spacing:-0.3px}
   header h1 span{background:linear-gradient(90deg,#7c6cff,#4fc3f7,#ff6ec7);-webkit-background-clip:text;background-clip:text;color:transparent}
   .h-actions{display:flex;gap:8px;align-items:center}
+  .nav-link{display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--line);color:var(--sub);padding:8px 13px;border-radius:10px;font-size:0.85rem;font-family:'Sarabun';cursor:pointer;transition:.2s;font-weight:500;text-decoration:none}
+  .nav-link:hover{border-color:var(--acc);color:var(--text);transform:translateY(-1px)}
+  .nav-link.on{background:rgba(124,108,255,0.15);border-color:var(--acc);color:#c9c0ff;font-weight:600}
   .btn{background:var(--card2);border:1px solid var(--line);color:var(--text);padding:8px 14px;border-radius:10px;font-size:0.85rem;font-family:'Sarabun';cursor:pointer;transition:.2s;font-weight:500}
   .btn:hover{border-color:var(--acc);transform:translateY(-1px)}
   .btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
@@ -99,6 +102,9 @@
 <header>
   <h1>UI Style Picker <span>✦ เลือกลุคก่อนทำ</span></h1>
   <div class="h-actions">
+    <a class="nav-link" href="index.html">🧩 Studio</a>
+    <a class="nav-link on" href="picker.html">🎨 ธีม Picker</a>
+    <a class="nav-link" href="components.html">📦 Components</a>
     <button class="btn" id="btnExport" disabled>⬇ Export CSS tokens</button>
   </div>
 </header>

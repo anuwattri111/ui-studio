@@ -30,6 +30,9 @@
   header h1{font-size:1.1rem;font-weight:700}
   header h1 span{color:#7fd4f8}
   .h-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .nav-link{display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--line);color:var(--sub);padding:8px 13px;border-radius:10px;font-size:0.82rem;font-family:'Sarabun';cursor:pointer;transition:.2s;font-weight:500;text-decoration:none}
+  .nav-link:hover{border-color:var(--acc);color:var(--text);transform:translateY(-1px)}
+  .nav-link.on{background:rgba(124,108,255,0.12);border-color:var(--acc);color:#c9c0ff;font-weight:600}
   .h-right label{font-size:0.8rem;color:var(--sub)}
   .h-right select{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px 10px;font-size:0.82rem;font-family:'Sarabun'}
   .wrap{max-width:1200px;margin:0 auto;padding:20px}
@@ -111,7 +114,9 @@
         <option value="spotify">Spotify</option>
       </select>
     </label>
-    <a href="picker.html" style="color:#7fd4f8;font-size:0.8rem;text-decoration:none">← กลับไปเลือกธีม</a>
+    <a class="nav-link" href="index.html">🧩 Studio</a>
+    <a class="nav-link" href="picker.html">🎨 ธีม Picker</a>
+    <a class="nav-link on" href="components.html">📦 Components</a>
   </div>
 </header>
 
