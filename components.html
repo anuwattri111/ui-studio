@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Component Library — ตัวอย่าง (เลือกลุค + component พร้อมใช้)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d0e14;--card:#171923;--line:#2a2d3d;--text:#f2f3f7;--sub:#9aa0b5;--acc:#7c6cff;--ok:#4ade80}
+  /* ===== theme tokens (เปลี่ยนจาก UI Style Picker) ===== */
+  --ui-bg:#f5f5f7;
+  --ui-surface:#ffffff;
+  --ui-text:#1d1d1f;
+  --ui-accent:#0071e3;
+  --ui-radius:8px;
+  --ui-font:'Sarabun',sans-serif;
+  --ui-shadow:0 2px 10px rgba(0,0,0,0.08);
+  --ui-border:1px solid #f0f0f2;
+  --ui-btn-bg:#0071e3;
+  --ui-btn-text:#ffffff;
+  --ui-row-bg:#ffffff;
+  --ui-row-text:#1d1d1f;
+  --ui-nav:#86868b;
+  --ui-icon-bg:#f0f0f5;
+}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif}
+  header{position:sticky;top:0;z-index:50;background:rgba(13,14,20,0.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  header h1{font-size:1.1rem;font-weight:700}
+  header h1 span{color:#7fd4f8}
+  .h-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .h-right label{font-size:0.8rem;color:var(--sub)}
+  .h-right select{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px 10px;font-size:0.82rem;font-family:'Sarabun'}
+  .wrap{max-width:1200px;margin:0 auto;padding:20px}
+  .intro{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:20px;font-size:0.88rem;color:var(--sub);line-height:1.6}
+  .intro b{color:var(--text)}
+  .demo-bar{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:24px}
+  .demo-bar .lbl{font-size:0.78rem;color:var(--sub);margin-bottom:10px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .c-block{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .c-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-size:0.82rem;font-weight:600}
+  .c-head .cnt{font-size:0.7rem;color:var(--sub);font-weight:400}
+  .c-body{background:#101218;padding:22px;min-height:120px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px}
+  .c-copy{width:100%;background:none;border:none;border-top:1px solid var(--line);color:#7fd4f8;padding:9px;font-size:0.75rem;cursor:pointer;font-family:'Sarabun'}
+  .c-copy:hover{background:rgba(127,212,248,0.08)}
+  /* ===== ตัวอย่าง component ใช้ CSS variables ของลุค ===== */
+  .demo-scope{ --b:var(--ui-bg); --s:var(--ui-surface); --tx:var(--ui-text); --a:var(--ui-accent); --r:var(--ui-radius); --f:var(--ui-font); --sh:var(--ui-shadow); --bd:var(--ui-border); --bb:var(--ui-btn-bg); --bt:var(--ui-btn-text); --rb:var(--ui-row-bg); --rt:var(--ui-row-text); --nv:var(--ui-nav); --ib:var(--ui-icon-bg); }
+  .demo-scope *{font-family:var(--f)}
+  /* ปุ่ม */
+  .xbtn{background:var(--bb);color:var(--bt);border:none;border-radius:var(--r);padding:9px 18px;font-size:0.85rem;font-weight:600;cursor:pointer}
+  .xbtn.ghost{background:transparent;color:var(--a);border:1px solid var(--a)}
+  .xbtn.warn{background:#dc2626;color:#fff}
+  /* ปุ่มค้นหา */
+  .xsearch{display:flex;align-items:center;gap:8px;background:var(--s);border:var(--bd);border-radius:var(--r);padding:8px 14px;box-shadow:var(--sh);width:100%;max-width:260px}
+  .xsearch input{flex:1;border:none;background:none;color:var(--tx);font-size:0.85rem;outline:none;font-family:var(--f)}
+  .xsearch input::placeholder{color:var(--nv)}
+  .xsearch .go{background:var(--bb);color:var(--bt);border:none;border-radius:calc(var(--r)/2);padding:5px 12px;font-size:0.75rem;cursor:pointer;font-weight:600}
+  /* การ์ด */
+  .xcard{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:18px;width:100%;max-width:250px}
+  .xcard .ct{font-size:0.95rem;font-weight:700;color:var(--tx);margin-bottom:4px}
+  .xcard .cs{font-size:0.78rem;color:var(--nv);margin-bottom:12px}
+  .xcard .cb{font-size:0.8rem;color:var(--rt);line-height:1.5;margin-bottom:12px}
+  /* แถบ nav */
+  .xnav{display:flex;align-items:center;justify-content:space-between;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:10px 16px;width:100%;max-width:300px}
+  .xnav .brand{font-weight:700;color:var(--tx);font-size:0.9rem}
+  .xnav a{color:var(--nv);font-size:0.8rem;text-decoration:none}
+  .xnav a.on{color:var(--a);font-weight:700}
+  /* ฟอร์ม */
+  .xform{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:18px;width:100%;max-width:250px}
+  .xform label{display:block;font-size:0.75rem;color:var(--nv);margin-bottom:4px}
+  .xform input{width:100%;background:var(--rb);border:var(--bd);border-radius:calc(var(--r)/2);padding:8px 10px;color:var(--tx);font-size:0.82rem;margin-bottom:10px;outline:none;font-family:var(--f)}
+  .xform input:focus{border-color:var(--a)}
+  /* ตาราง */
+  .xtable{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;width:100%;max-width:320px}
+  .xtable table{width:100%;border-collapse:collapse;font-size:0.78rem}
+  .xtable th{background:var(--ib);color:var(--tx);padding:9px 12px;text-align:left;font-weight:600}
+  .xtable td{color:var(--rt);padding:8px 12px;border-top:var(--bd)}
+  .xtable .amt{text-align:right;font-weight:600}
+  /* badge */
+  .xbadge{display:inline-flex;align-items:center;gap:6px;background:var(--ib);color:var(--a);border-radius:99px;padding:4px 12px;font-size:0.72rem;font-weight:600}
+  .xbadge.ok{background:rgba(74,222,128,0.15);color:#86efac}
+  .xbadge.warn{background:rgba(252,211,77,0.15);color:#fde047}
+  /* toggle */
+  .xtoggle{width:44px;height:24px;border-radius:99px;background:var(--ib);position:relative;cursor:pointer;border:var(--bd)}
+  .xtoggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+  .xtoggle.on{background:var(--a)}
+  .xtoggle.on::after{left:22px}
+  /* stats */
+  .xstat{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:16px;text-align:center;width:100%;max-width:130px}
+  .xstat .num{font-size:1.3rem;font-weight:700;color:var(--tx)}
+  .xstat .lbl2{font-size:0.72rem;color:var(--nv);margin-top:2px}
+  .note{text-align:center;color:var(--sub);font-size:0.75rem;margin-top:26px;line-height:1.7}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ok);color:#052e16;padding:12px 22px;border-radius:12px;font-weight:600;font-size:0.9rem;z-index:200;opacity:0;transition:.3s}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Component Library <span>✦ ตัวอย่าง</span></h1>
+  <div class="h-right">
+    <label>ลุค:
+      <select id="themeSel">
+        <option value="flat">Flat Minimal</option>
+        <option value="glass">Glassmorphism</option>
+        <option value="dark">Dark Premium</option>
+        <option value="grad">Gradient Vibes</option>
+        <option value="stripe">Stripe</option>
+        <option value="linear">Linear</option>
+        <option value="spotify">Spotify</option>
+      </select>
+    </label>
+    <a href="picker.html" style="color:#7fd4f8;font-size:0.8rem;text-decoration:none">← กลับไปเลือกธีม</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="intro">
+    <b>นี่คือ "Component Library" — ตัวอย่างว่าถ้าขยายจาก UI Style Picker จะได้อะไร</b><br>
+    ลองเปลี่ยนลุคด้านบน → component ทุกตัวเปลี่ยนธีมตามทันที (ใช้ CSS variables ชุดเดียว) แต่ละตัวกดปุ่ม "คัดลอก" ได้ HTML+CSS พร้อมใช้
+  </div>
+
+  <!-- สาธิตเปลี่ยนธีม -->
+  <div class="demo-bar">
+    <div class="lbl">🖼 ตัวอย่าง component ทั้งหมด (แต่งด้วยลุคที่เลือกด้านบน)</div>
+    <div class="demo-scope" id="demoArea">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="xbtn">ปุ่มหลัก</button>
+        <button class="xbtn ghost">ปุ่มเส้นขอบ</button>
+        <button class="xbtn warn">ลบ</button>
+        <span class="xbadge">หมวด</span>
+        <span class="xbadge ok">สำเร็จ</span>
+        <span class="xbadge warn">รอดำเนินการ</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- ปุ่มค้นหา -->
+    <div class="c-block">
+      <div class="c-head">🔍 ปุ่มค้นหา <span class="cnt">Search bar</span></div>
+      <div class="c-body"><div class="demo-scope" style="width:100%;display:flex;justify-content:center"><div class="xsearch"><input placeholder="ค้นหาอะไรสักอย่าง..."><button class="go">ค้นหา</button></div></div></div>
+      <button class="c-copy" data-code="search">📋 คัดลอก HTML+CSS</button>
+    </div>
+
+    <!-- ปุ่ม -->
+    <div class="c-block">
+      <div class="c-head">🔘 ปุ่มหลากแบบ <span class="cnt">Buttons</span></div>
+      <div class="c-body"><div class="demo-scope" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="xbtn">หลัก</button><button class="xbtn ghost">เส้นขอบ</button><button class="xbtn warn">ลบ</button><button class="xbtn" style="border-radius:99px">กลม</button></div></div>
+      <button class="c-copy" data-code="buttons">📋 คัดลอก HTML+CSS</button>
+    </div>
+
+    <!-- การ์ด -->
+    <div class="c-block">
+      <div class="c-head">📇 การ์ด <span class="cnt">Card</span></div>
+      <div class="c-body"><div class="demo-scope"><div class="xcard"><div class="ct">บัตรสมาชิก</div><div class="cs">Premium Plan</div><div class="cb">สิทธิประโยชน์ครบทุกอย่าง สำหรับสมาชิกระดับสูง</div><button class="xbtn" style="width:100%">ดูรายละเอียด</button></div></div></div>
+      <button class="c-copy" data-code="card">📋 คัดลอก HTML+CSS</button>
+    </div>
+
+    <!-- แถบ nav -->
+    <div class="c-block">
+      <div class="c-head">🧭 แถบนำทาง <span class="cnt">Navbar</span></div>
+      <div class="c-body"><div class="demo-scope"><div class="xnav"><span class="brand">แบรนด์</span><span style="display:flex;gap:12px"><a class="on">หน้าแรก</a><a>รายการ</a><a>บัญชี</a></span></div></div></div>
+      <button class="c-copy" data-code="nav">📋 คัดลอก HTML+CSS</button>
+    </div>
+
+    <!-- ฟอร์ม -->
+    <div class="c-block">
+      <div class="c-head">📝 ฟอร์ม <span class="cnt">Form</span></div>
+      <div class="c-body"><div class="demo-scope"><div class="xform"><label>อีเมล</label><input placeholder="you@email.com"><label>รหัสผ่าน</label><input type="password" placeholder="••••••"><button class="xbtn" style="width:100%">เข้าสู่ระบบ</button></div></div></div>
+      <button class="c-copy" data-code="form">📋 คัดลอก HTML+CSS</button>
+    </div>
+
+    <!-- ตาราง -->
+    <div class="c-block">
+      <div class="c-head">📊 ตาราง <span class="cnt">Table</span></div>
+      <div class="c-body"><div class="demo-scope"><div class="xtable"><table><tr><th>รายการ</th><th class="amt">จำนวน</th></tr><tr><td>เซเว่น</td><td class="amt">-฿89</td></tr><tr><td>เงินเดือน</td><td class="amt">+฿25,000</td></tr><tr><td>คาเฟ่</td><td class="amt">-฿120</td></tr></table></div></div></div>
+      <button class="c-copy" data-code="table">📋 คัดลอก HTML+CSS</button>
+    </div>
+
+    <!-- stats -->
+    <div class="c-block">
+      <div class="c-head">📈 สถิติ <span class="cnt">Stat cards</span></div>
+      <div class="c-body"><div class="demo-scope" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><div class="xstat"><div class="num">฿24,850</div><div class="lbl2">ยอดคงเหลือ</div></div><div class="xstat"><div class="num">+฿5,000</div><div class="lbl2">รายได้</div></div><div class="xstat"><div class="num">-฿1,200</div><div class="lbl2">รายจ่าย</div></div></div></div>
+      <button class="c-copy" data-code="stats">📋 คัดลอก HTML+CSS</button>
+    </div>
+
+    <!-- toggle + badge -->
+    <div class="c-block">
+      <div class="c-head">🎛 ควบคุม <span class="cnt">Toggle / Badge</span></div>
+      <div class="c-body"><div class="demo-scope" style="display:flex;gap:14px;align-items:center"><div class="xtoggle on"></div><div class="xtoggle"></div><span class="xbadge ok">เปิดใช้งาน</span></div></div>
+      <button class="c-copy" data-code="toggle">📋 คัดลอก HTML+CSS</button>
+    </div>
+
+  </div>
+
+  <p class="note">
+    ✨ แค่ตัวอย่าง ~8 component ที่พบบ่อย — ขยายได้อีกเยอะ (dropdown, modal, tabs, progress bar, avatar, toast...)<br>
+    กดปุ่ม "คัดลอก" → ได้ HTML + CSS (CSS variables ของลุคที่เลือก) ไปวางในโปรเจคใช้ได้เลย
+  </p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== ธีมที่ใช้ได้ ===== */
+const THEMES = {
+  flat:  { bg:'#f5f5f7', surface:'#ffffff', text:'#1d1d1f', accent:'#0071e3', radius:'8px', font:"'Sarabun',sans-serif", shadow:'0 2px 10px rgba(0,0,0,0.08)', border:'1px solid #f0f0f2', btnBg:'#0071e3', btnText:'#ffffff', rowBg:'#ffffff', rowText:'#1d1d1f', nav:'#86868b', iconBg:'#f0f0f5' },
+  glass: { bg:'linear-gradient(135deg,#667eea 0%,#764ba2 55%,#f093fb 100%)', surface:'rgba(255,255,255,0.14)', text:'#ffffff', accent:'#ffffff', radius:'18px', font:"'Sarabun',sans-serif", shadow:'0 8px 24px rgba(0,0,0,0.35)', border:'1px solid rgba(255,255,255,0.3)', btnBg:'rgba(255,255,255,0.35)', btnText:'#ffffff', rowBg:'rgba(255,255,255,0.18)', rowText:'#ffffff', nav:'rgba(255,255,255,0.7)', iconBg:'rgba(255,255,255,0.3)' },
+  dark:  { bg:'linear-gradient(180deg,#111118,#0a0a10)', surface:'#111118', text:'#f7f8f8', accent:'#7c6cff', radius:'12px', font:"'Sarabun',sans-serif", shadow:'0 8px 24px rgba(0,0,0,0.5)', border:'1px solid rgba(255,255,255,0.08)', btnBg:'#7c6cff', btnText:'#ffffff', rowBg:'rgba(255,255,255,0.03)', rowText:'#d0d6e0', nav:'#62666d', iconBg:'rgba(124,108,255,0.25)' },
+  grad:  { bg:'linear-gradient(160deg,#ff6ec7,#7873f5,#4facfe)', surface:'rgba(255,255,255,0.22)', text:'#ffffff', accent:'#ffffff', radius:'16px', font:"'Sarabun',sans-serif", shadow:'0 8px 24px rgba(0,0,0,0.3)', border:'1px solid rgba(255,255,255,0.35)', btnBg:'rgba(255,255,255,0.4)', btnText:'#ffffff', rowBg:'rgba(255,255,255,0.3)', rowText:'#ffffff', nav:'rgba(255,255,255,0.8)', iconBg:'rgba(255,255,255,0.45)' },
+  stripe:{ bg:'#ffffff', surface:'#ffffff', text:'#061b31', accent:'#533afd', radius:'6px', font:"'Source Sans 3','Sarabun',sans-serif", shadow:'rgba(50,50,93,0.25) 0px 20px 40px -20px', border:'1px solid #e5edf5', btnBg:'#533afd', btnText:'#ffffff', rowBg:'#ffffff', rowText:'#273951', nav:'#64748d', iconBg:'rgba(83,58,253,0.08)' },
+  linear:{ bg:'#08090a', surface:'rgba(255,255,255,0.03)', text:'#f7f8f8', accent:'#5e6ad2', radius:'8px', font:"'Inter','Sarabun',sans-serif", shadow:'rgba(0,0,0,0.4) 0px 4px 12px', border:'1px solid rgba(255,255,255,0.08)', btnBg:'#5e6ad2', btnText:'#ffffff', rowBg:'rgba(255,255,255,0.03)', rowText:'#d0d6e0', nav:'#8a8f98', iconBg:'rgba(113,112,255,0.12)' },
+  spotify:{ bg:'#121212', surface:'#181818', text:'#ffffff', accent:'#1db954', radius:'8px', font:"'Sarabun',sans-serif", shadow:'0 4px 16px rgba(0,0,0,0.5)', border:'none', btnBg:'#1db954', btnText:'#000000', rowBg:'#181818', rowText:'#b3b3b3', nav:'#b3b3b3', iconBg:'#1db954' },
+};
+function applyTheme(name){
+  const t = THEMES[name];
+  const root = document.documentElement.style;
+  root.setProperty('--ui-bg', t.bg);
+  root.setProperty('--ui-surface', t.surface);
+  root.setProperty('--ui-text', t.text);
+  root.setProperty('--ui-accent', t.accent);
+  root.setProperty('--ui-radius', t.radius);
+  root.setProperty('--ui-font', t.font);
+  root.setProperty('--ui-shadow', t.shadow);
+  root.setProperty('--ui-border', t.border);
+  root.setProperty('--ui-btn-bg', t.btnBg);
+  root.setProperty('--ui-btn-text', t.btnText);
+  root.setProperty('--ui-row-bg', t.rowBg);
+  root.setProperty('--ui-row-text', t.rowText);
+  root.setProperty('--ui-nav', t.nav);
+  root.setProperty('--ui-icon-bg', t.iconBg);
+}
+document.getElementById('themeSel').addEventListener('change', e=>applyTheme(e.target.value));
+
+/* ===== copy ตัวอย่าง component ===== */
+const CODES = {
+  search: `<!-- ปุ่มค้นหา (HTML) -->
+<div class="xsearch"><input placeholder="ค้นหาอะไรสักอย่าง..."><button class="go">ค้นหา</button></div>
+
+<!-- CSS: วาง CSS variables ของลุคไว้ที่ :root หรือ class สโคป แล้วใช้ class นี้ -->
+.xsearch{display:flex;align-items:center;gap:8px;background:var(--ui-surface);border:var(--ui-border);border-radius:var(--ui-radius);padding:8px 14px;box-shadow:var(--ui-shadow);width:100%;max-width:260px}
+.xsearch input{flex:1;border:none;background:none;color:var(--ui-text);font-size:0.85rem;outline:none}
+.xsearch .go{background:var(--ui-btn-bg);color:var(--ui-btn-text);border:none;border-radius:calc(var(--ui-radius)/2);padding:5px 12px;font-size:0.75rem;cursor:pointer;font-weight:600}`,
+  buttons: `<!-- ปุ่ม (HTML) -->
+<button class="xbtn">ปุ่มหลัก</button>
+<button class="xbtn ghost">ปุ่มเส้นขอบ</button>
+<button class="xbtn warn">ลบ</button>
+
+<!-- CSS -->
+.xbtn{background:var(--ui-btn-bg);color:var(--ui-btn-text);border:none;border-radius:var(--ui-radius);padding:9px 18px;font-size:0.85rem;font-weight:600;cursor:pointer}
+.xbtn.ghost{background:transparent;color:var(--ui-accent);border:1px solid var(--ui-accent)}
+.xbtn.warn{background:#dc2626;color:#fff}`,
+  card: `<!-- การ์ด (HTML) -->
+<div class="xcard"><div class="ct">บัตรสมาชิก</div><div class="cs">Premium Plan</div><div class="cb">สิทธิประโยชน์ครบทุกอย่าง</div><button class="xbtn" style="width:100%">ดูรายละเอียด</button></div>
+
+<!-- CSS -->
+.xcard{background:var(--ui-surface);border:var(--ui-border);border-radius:var(--ui-radius);box-shadow:var(--ui-shadow);padding:18px}
+.xcard .ct{font-size:0.95rem;font-weight:700;color:var(--ui-text);margin-bottom:4px}
+.xcard .cs{font-size:0.78rem;color:var(--ui-nav);margin-bottom:12px}
+.xcard .cb{font-size:0.8rem;color:var(--ui-row-text);line-height:1.5;margin-bottom:12px}`,
+  nav: `<!-- Navbar (HTML) -->
+<nav class="xnav"><span class="brand">แบรนด์</span><span style="display:flex;gap:12px"><a class="on">หน้าแรก</a><a>รายการ</a><a>บัญชี</a></span></nav>
+
+<!-- CSS -->
+.xnav{display:flex;align-items:center;justify-content:space-between;background:var(--ui-surface);border:var(--ui-border);border-radius:var(--ui-radius);box-shadow:var(--ui-shadow);padding:10px 16px}
+.xnav .brand{font-weight:700;color:var(--ui-text);font-size:0.9rem}
+.xnav a{color:var(--ui-nav);font-size:0.8rem;text-decoration:none}
+.xnav a.on{color:var(--ui-accent);font-weight:700}`,
+  form: `<!-- ฟอร์ม (HTML) -->
+<form class="xform"><label>อีเมล</label><input placeholder="you@email.com"><label>รหัสผ่าน</label><input type="password"><button class="xbtn" style="width:100%">เข้าสู่ระบบ</button></form>
+
+<!-- CSS -->
+.xform{background:var(--ui-surface);border:var(--ui-border);border-radius:var(--ui-radius);box-shadow:var(--ui-shadow);padding:18px}
+.xform label{display:block;font-size:0.75rem;color:var(--ui-nav);margin-bottom:4px}
+.xform input{width:100%;background:var(--ui-row-bg);border:var(--ui-border);border-radius:calc(var(--ui-radius)/2);padding:8px 10px;color:var(--ui-text);font-size:0.82rem;margin-bottom:10px;outline:none}
+.xform input:focus{border-color:var(--ui-accent)}`,
+  table: `<!-- ตาราง (HTML) -->
+<div class="xtable"><table><tr><th>รายการ</th><th class="amt">จำนวน</th></tr><tr><td>เซเว่น</td><td class="amt">-฿89</td></tr></table></div>
+
+<!-- CSS -->
+.xtable{background:var(--ui-surface);border:var(--ui-border);border-radius:var(--ui-radius);box-shadow:var(--ui-shadow);overflow:hidden}
+.xtable table{width:100%;border-collapse:collapse;font-size:0.78rem}
+.xtable th{background:var(--ui-icon-bg);color:var(--ui-text);padding:9px 12px;text-align:left}
+.xtable td{color:var(--ui-row-text);padding:8px 12px;border-top:var(--ui-border)}
+.xtable .amt{text-align:right;font-weight:600}`,
+  stats: `<!-- สถิติ (HTML) -->
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+  <div class="xstat"><div class="num">฿24,850</div><div class="lbl2">ยอดคงเหลือ</div></div>
+  <div class="xstat"><div class="num">+฿5,000</div><div class="lbl2">รายได้</div></div>
+</div>
+
+<!-- CSS -->
+.xstat{background:var(--ui-surface);border:var(--ui-border);border-radius:var(--ui-radius);box-shadow:var(--ui-shadow);padding:16px;text-align:center}
+.xstat .num{font-size:1.3rem;font-weight:700;color:var(--ui-text)}
+.xstat .lbl2{font-size:0.72rem;color:var(--ui-nav);margin-top:2px}`,
+  toggle: `<!-- Toggle + Badge (HTML) -->
+<div class="xtoggle on"></div><div class="xtoggle"></div><span class="xbadge ok">เปิดใช้งาน</span>
+
+<!-- CSS -->
+.xtoggle{width:44px;height:24px;border-radius:99px;background:var(--ui-icon-bg);position:relative;cursor:pointer;border:var(--ui-border)}
+.xtoggle::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+.xtoggle.on{background:var(--ui-accent)}
+.xtoggle.on::after{left:22px}
+.xbadge{display:inline-flex;align-items:center;gap:6px;background:var(--ui-icon-bg);color:var(--ui-accent);border-radius:99px;padding:4px 12px;font-size:0.72rem;font-weight:600}
+.xbadge.ok{background:rgba(74,222,128,0.15);color:#86efac}`,
+};
+document.querySelectorAll('.c-copy').forEach(btn=>{
+  btn.addEventListener('click', async ()=>{
+    const name = document.getElementById('themeSel').value;
+    const code = CODES[btn.dataset.code];
+    const theme = THEMES[name];
+    const cssVars = `/* CSS variables ของลุค ${name} */
+:root{
+  --ui-bg:${theme.bg};
+  --ui-surface:${theme.surface};
+  --ui-text:${theme.text};
+  --ui-accent:${theme.accent};
+  --ui-radius:${theme.radius};
+  --ui-font:${theme.font};
+  --ui-shadow:${theme.shadow};
+  --ui-border:${theme.border};
+  --ui-btn-bg:${theme.btnBg};
+  --ui-btn-text:${theme.btnText};
+  --ui-row-bg:${theme.rowBg};
+  --ui-row-text:${theme.rowText};
+  --ui-nav:${theme.nav};
+  --ui-icon-bg:${theme.iconBg};
+}
+/* font ที่ต้อง import ถ้ายังไม่มี */
+/* <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet"> */
+\n` + code;
+    try{
+      await navigator.clipboard.writeText(cssVars);
+      toast('📋 คัดลอกแล้ว (HTML + CSS ลุค '+name+')!');
+    }catch(e){
+      download('component-'+btn.dataset.code+'-'+name+'.txt', cssVars);
+      toast('⬇ ดาวน์โหลดไฟล์แล้ว');
+    }
+  });
+});
+function download(filename,text){const b=new Blob([text],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=filename;a.click();URL.revokeObjectURL(a.href);}
+let tmr;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tmr);tmr=setTimeout(()=>t.classList.remove('show'),2600);}
+applyTheme('flat');
+</script>
+</body>
+</html>

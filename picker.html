@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI Style Picker — เลือกลุคก่อนทำโปรเจค</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d0e14;--card:#171923;--card2:#1d2030;--line:#2a2d3d;--text:#f2f3f7;--sub:#9aa0b5;--acc:#7c6cff;--ok:#4ade80}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif}
+  header{position:sticky;top:0;z-index:50;background:rgba(13,14,20,0.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  header h1{font-size:1.15rem;font-weight:700;letter-spacing:-0.3px}
+  header h1 span{background:linear-gradient(90deg,#7c6cff,#4fc3f7,#ff6ec7);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .h-actions{display:flex;gap:8px;align-items:center}
+  .btn{background:var(--card2);border:1px solid var(--line);color:var(--text);padding:8px 14px;border-radius:10px;font-size:0.85rem;font-family:'Sarabun';cursor:pointer;transition:.2s;font-weight:500}
+  .btn:hover{border-color:var(--acc);transform:translateY(-1px)}
+  .btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+  .btn.primary:hover{filter:brightness(1.15)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+  .wrap{max-width:1200px;margin:0 auto;padding:20px}
+  .cats{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;padding-bottom:6px}
+  .cat-btn{background:var(--card);border:1px solid var(--line);color:var(--sub);padding:7px 16px;border-radius:99px;font-size:0.82rem;cursor:pointer;white-space:nowrap;transition:.2s;font-family:'Sarabun'}
+  .cat-btn:hover{color:var(--text)}
+  .cat-btn.on{background:rgba(124,108,255,0.15);border-color:var(--acc);color:#c9c0ff;font-weight:600}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+  .item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;transition:.25s;display:flex;flex-direction:column;position:relative}
+  .item:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 10px 30px rgba(124,108,255,0.12)}
+  .item.sel{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc),0 10px 30px rgba(124,108,255,0.2)}
+  .item .chk{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--acc);color:#fff;display:none;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700}
+  .item.sel .chk{display:flex}
+  .item .meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+  .item h3{font-size:0.98rem;font-weight:600}
+  .tag{font-size:0.68rem;padding:2px 9px;border-radius:99px;font-weight:600;white-space:nowrap}
+  .tag.heart{background:rgba(255,110,199,0.2);color:#ff8fd0}
+  .tag.dev{background:rgba(79,195,247,0.18);color:#7fd4f8}
+  .tag.fun{background:rgba(255,200,87,0.18);color:#ffd166}
+  .tag.brand{background:rgba(74,222,128,0.15);color:#86efac}
+  .item .feel{font-size:0.78rem;color:var(--sub);margin-bottom:10px;line-height:1.45}
+  .phone{width:100%;aspect-ratio:9/15;border-radius:18px;overflow:hidden;position:relative;display:block;box-shadow:0 8px 24px rgba(0,0,0,0.4);margin-top:auto}
+  .phone .ph{display:flex;flex-direction:column;height:100%;padding:12px 10px 8px}
+  .p-top{display:flex;justify-content:space-between;align-items:center;font-size:0.55rem;opacity:.8;margin-bottom:8px}
+  .p-greet{font-size:0.58rem;opacity:.65}
+  .p-name{font-size:0.8rem;font-weight:600;margin-bottom:6px}
+  .p-bal{font-size:1.25rem;font-weight:700;letter-spacing:-0.5px;margin-bottom:10px}
+  .p-btns{display:flex;gap:5px;margin-bottom:8px}
+  .p-btn{flex:1;text-align:center;font-size:0.58rem;padding:5px 0;border-radius:8px;font-weight:600}
+  .p-list{display:flex;flex-direction:column;gap:4px}
+  .p-row{display:flex;justify-content:space-between;align-items:center;padding:5px 7px;border-radius:7px;font-size:0.56rem}
+  .p-row .l{display:flex;align-items:center;gap:5px}
+  .p-row .ic{width:14px;height:14px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:0.5rem}
+  .p-row .amt{font-weight:600}
+  .p-nav{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:6px 0;font-size:0.5rem}
+  .p-nav span{opacity:.6}
+  .p-nav span.on{font-weight:700;opacity:1}
+  /* ===== detail panel ===== */
+  .panel{position:fixed;top:0;right:-560px;width:min(560px,94vw);height:100vh;background:var(--card);border-left:1px solid var(--line);z-index:100;transition:right .3s ease;overflow-y:auto;box-shadow:-20px 0 60px rgba(0,0,0,0.5)}
+  .panel.open{right:0}
+  .panel .phd{position:sticky;top:0;background:rgba(23,25,35,0.95);backdrop-filter:blur(10px);padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .panel .phd h2{font-size:1.1rem}
+  .panel .phd .close{background:none;border:none;color:var(--sub);font-size:1.4rem;cursor:pointer;padding:4px 8px}
+  .panel .pbody{padding:20px}
+  .panel .big-phone{width:200px;margin:0 auto 18px}
+  .panel .feel{color:var(--sub);font-size:0.9rem;margin-bottom:14px;line-height:1.6}
+  .tokens{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+  .tok{display:flex;justify-content:space-between;align-items:center;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:0.8rem}
+  .tok .k{color:var(--sub)}
+  .tok .v{display:flex;align-items:center;gap:8px;font-family:monospace;font-size:0.75rem}
+  .swatch{width:18px;height:18px;border-radius:5px;border:1px solid rgba(255,255,255,0.15)}
+  .sw-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+  .sw-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:0.62rem;color:var(--sub)}
+  .sw-item .sw{width:34px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,0.15)}
+  .export-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .export-actions .btn{flex:1;min-width:130px}
+  /* ===== editor ปรับแต่ง ===== */
+  .edit-sec{margin-top:6px}
+  .edit-sec .sec-title{font-size:0.85rem;color:var(--sub);margin:14px 0 8px;display:flex;align-items:center;gap:6px}
+  .edit-item{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:6px 10px;margin-bottom:6px;flex-wrap:wrap}
+  .edit-item .el{width:104px;font-size:0.76rem;color:var(--sub);flex-shrink:0}
+  .edit-item input[type=color]{width:30px;height:30px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px;flex-shrink:0}
+  .edit-item .bg-pts{display:flex;gap:4px;flex-wrap:wrap}
+  .edit-item input.txt{flex:1;min-width:110px;background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:6px 8px;font-family:monospace;font-size:0.68rem}
+  .edit-item input.txt:focus{outline:none;border-color:var(--acc)}
+  .edit-extra{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;align-items:center}
+  .edit-extra label{font-size:0.76rem;color:var(--sub);display:flex;align-items:center;gap:6px}
+  .edit-extra input[type=range]{width:100px;accent-color:var(--acc)}
+  .edit-extra select{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:6px;padding:5px 8px;font-size:0.72rem}
+  .edit-actions{display:flex;gap:8px;margin-top:10px}
+  .edit-actions .btn{flex:1}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ok);color:#052e16;padding:12px 22px;border-radius:12px;font-weight:600;font-size:0.9rem;z-index:200;opacity:0;transition:.3s;box-shadow:0 8px 30px rgba(0,0,0,0.4)}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .empty{text-align:center;color:var(--sub);padding:60px 0;font-size:0.9rem}
+  .foot-note{text-align:center;color:var(--sub);font-size:0.75rem;margin-top:30px;line-height:1.7}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>UI Style Picker <span>✦ เลือกลุคก่อนทำ</span></h1>
+  <div class="h-actions">
+    <button class="btn" id="btnExport" disabled>⬇ Export CSS tokens</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="cats" id="cats"></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">ไม่พบลุคในหมวดนี้</div>
+  <p class="foot-note">
+    คลิกการ์ดเพื่อดูรายละเอียด + Export · ทุกตัวอย่างใช้ข้อมูลเดียวกัน (฿24,850.75) เพื่อเทียบกันง่าย<br>
+    สี/ฟอนต์/มุม/เงา → ได้เป็น CSS variables ไปใช้ในโปรเจคต่อได้ทันที ✨
+  </p>
+</div>
+
+<!-- detail panel -->
+<div class="panel" id="panel">
+  <div class="phd">
+    <h2 id="pTitle">ลุค</h2>
+    <button class="close" id="pClose">✕</button>
+  </div>
+  <div class="pbody">
+    <div class="big-phone" id="pPhone"></div>
+    <p class="feel" id="pFeel"></p>
+    <h3 style="font-size:0.85rem;color:var(--sub);margin-bottom:4px">ชุดสี</h3>
+    <div class="sw-row" id="pSwatches"></div>
+    <h3 style="font-size:0.85rem;color:var(--sub);margin-bottom:4px">Design tokens</h3>
+    <div class="tokens" id="pTokens"></div>
+
+    <div class="edit-sec">
+      <div class="sec-title">🎨 ปรับแต่งก่อนดาวน์โหลด</div>
+      <div id="pEdit"></div>
+      <div class="edit-extra">
+        <label>มุมโค้ง <input type="range" id="rRadius" min="0" max="32" value="12"> <span id="rRadiusVal">12</span>px</label>
+        <label>ฟอนต์
+          <select id="fFont">
+            <option value="'Sarabun',sans-serif">Sarabun</option>
+            <option value="'Inter','Sarabun',sans-serif">Inter</option>
+            <option value="'Source Sans 3','Sarabun',sans-serif">Source Sans 3</option>
+            <option value="'Space Grotesk','Sarabun',sans-serif">Space Grotesk</option>
+            <option value="Georgia,'Sarabun',serif">Georgia (serif)</option>
+            <option value="'Courier New',monospace">Courier (mono)</option>
+            <option value="system-ui,'Sarabun',sans-serif">System UI</option>
+          </select>
+        </label>
+      </div>
+      <div class="edit-actions">
+        <button class="btn" id="pReset">↺ รีเซ็ตเป็นค่าเดิม</button>
+      </div>
+    </div>
+
+    <div class="export-actions">
+      <button class="btn primary" id="pExportCss">⬇ Download .css</button>
+      <button class="btn" id="pCopyCss">📋 Copy CSS</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   UI Style Picker — data-driven
+   เพิ่มลุคใหม่ = เพิ่ม object ใน STYLES แค่นั้น
+   ============================================================ */
+const STYLES = [
+/* ---------- ลุคยอดนิยม ---------- */
+{id:'glass',name:'Glassmorphism',cat:'ยอดนิยม',tag:'heart',tagTxt:'♥ ที่พี่ชอบ',feel:'กระจกใส + เงา soft + พื้นหลังสีสดใสด้านหลัง — หรู พรีเมียม ลอยตัว',use:'แอปเงิน/วอลเล็ต, dashboard, ของที่อยากดูแพง',
+ t:{bg:'linear-gradient(135deg,#667eea 0%,#764ba2 55%,#f093fb 100%)',surface:'rgba(255,255,255,0.12)',text:'#ffffff',accent:'rgba(255,255,255,0.25)',radius:'22px',font:"'Sarabun',sans-serif",shadow:'0 8px 24px rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.25)',btn:'rgba(255,255,255,0.25)',btnTxt:'#ffffff',row:'rgba(255,255,255,0.15)',rowTxt:'#ffffff',nav:'#ffffff',icBg:'rgba(255,255,255,0.3)'},
+ colors:['#667eea','#764ba2','#f093fb','rgba(255,255,255,0.12)','#ffffff']},
+
+{id:'dark',name:'Dark Premium',cat:'ยอดนิยม',tag:'dev',tagTxt:'Dev โปร',feel:'พื้นดำสนิท + ตัวอักษรขาวนวล + เส้นขอบบางๆ — ปลอดภัย มินิมอล เท่',use:'แอปสายเทค, dashboard, เครื่องมือทำงาน',
+ t:{bg:'linear-gradient(180deg,#111118,#0a0a10)',surface:'#111118',text:'#f7f8f8',accent:'#7c6cff',radius:'12px',font:"'Sarabun',sans-serif",shadow:'0 8px 24px rgba(0,0,0,0.5)',border:'1px solid rgba(255,255,255,0.08)',btn:'rgba(255,255,255,0.05)',btnTxt:'#e2e4e7',row:'rgba(255,255,255,0.03)',rowTxt:'#d0d6e0',nav:'#62666d',icBg:'rgba(124,108,255,0.25)'},
+ colors:['#0a0a0f','#111118','#f7f8f8','#7c6cff','#d0d6e0']},
+
+{id:'grad',name:'Gradient Vibes',cat:'ยอดนิยม',tag:'fun',tagTxt:'สดใส',feel:'สีไล่เฉดจัดจ้าน หวานแหวว — ทันสมัย มีชีวิตชีวา ดึงดูดสายตา',use:'แอปวัยรุ่น, โปรโมชัน, ของที่อยากป๊อป',
+ t:{bg:'linear-gradient(160deg,#ff6ec7,#7873f5,#4facfe)',surface:'rgba(255,255,255,0.2)',text:'#ffffff',accent:'#ffffff',radius:'16px',font:"'Sarabun',sans-serif",shadow:'0 8px 24px rgba(0,0,0,0.3)',border:'1px solid rgba(255,255,255,0.35)',btn:'rgba(255,255,255,0.35)',btnTxt:'#ffffff',row:'rgba(255,255,255,0.28)',rowTxt:'#ffffff',nav:'#ffffff',icBg:'rgba(255,255,255,0.45)'},
+ colors:['#ff6ec7','#7873f5','#4facfe','#ffffff']},
+
+{id:'flat',name:'Flat Minimal',cat:'ยอดนิยม',tag:'',tagTxt:'สะอาด',feel:'ขาวสะอาด ไร้เงา ไร้ลูกเล่น — เรียบหรูแบบ Apple เน้นเนื้อหา',use:'เว็บโปรดักต์, แอปทั่วไป, งานทางการ',
+ t:{bg:'#f5f5f7',surface:'#ffffff',text:'#1d1d1f',accent:'#0071e3',radius:'8px',font:"'Sarabun',sans-serif",shadow:'none',border:'1px solid #f0f0f2',btn:'#0071e3',btnTxt:'#ffffff',row:'#ffffff',rowTxt:'#1d1d1f',nav:'#86868b',icBg:'#f0f0f5'},
+ colors:['#f5f5f7','#ffffff','#1d1d1f','#0071e3','#86868b']},
+
+{id:'neu',name:'Neumorphism',cat:'ยอดนิยม',tag:'',tagTxt:'Soft',feel:'นูนนุ่มเหมือนปุ่มยาง — เงาเข้าออก 2 ทิศ ดูสัมผัสได้ ฟีลกดปุ่ม',use:'เครื่องคิดเลข, ปุ่มกด, ของที่อยากได้ฟีลสัมผัส',
+ t:{bg:'#e4ebf1',surface:'#e4ebf1',text:'#3d4456',accent:'#4c7df0',radius:'14px',font:"'Sarabun',sans-serif",shadow:'5px 5px 12px #c4ccd6, -5px -5px 12px #ffffff',border:'none',btn:'#e4ebf1',btnTxt:'#5b6b8c',row:'#e4ebf1',rowTxt:'#5b6b8c',nav:'#8a94a6',icBg:'linear-gradient(145deg,#e9f0f6,#d9e0e8)'},
+ colors:['#e4ebf1','#c4ccd6','#ffffff','#4c7df0','#5b6b8c']},
+
+{id:'brut',name:'Brutalist',cat:'ยอดนิยม',tag:'fun',tagTxt:'ดิบ เท่',feel:'ขอบหนา สีจัด มุมเหลี่ยม ตัวใหญ่ — ดิบ โบลด์ กล้าพูด จำง่าย',use:'พอร์ตโฟลิโอ, งานอาร์ต, ของที่อยากให้จำได้',
+ t:{bg:'#faf5e8',surface:'#faf5e8',text:'#111111',accent:'#ff4d00',radius:'0px',font:"'Space Grotesk','Sarabun',sans-serif",shadow:'3px 3px 0 #111111',border:'2px solid #111111',btn:'#111111',btnTxt:'#faf5e8',row:'#faf5e8',rowTxt:'#111111',nav:'#111111',icBg:'#ff4d00'},
+ colors:['#faf5e8','#111111','#ff4d00','#ffffff']},
+
+{id:'term',name:'Terminal / Mono',cat:'ยอดนิยม',tag:'dev',tagTxt:'Geek',feel:'พื้นดำ + ฟอนต์โค้ด + เขียวเรืองแสง — เทคสุดๆ ฟีลแฮกเกอร์',use:'เครื่องมือ dev, แดชบอร์ดเซิร์ฟเวอร์, สายเทค',
+ t:{bg:'#0c0c0c',surface:'#0c0c0c',text:'#33ff66',accent:'#33ff66',radius:'0px',font:"'Courier New',monospace",shadow:'0 0 12px rgba(51,255,102,0.4)',border:'1px solid #1e2e1e',btn:'#1a1a1a',btnTxt:'#33ff66',row:'#0c0c0c',rowTxt:'#9effb3',nav:'#33ff66',icBg:'#1e2e1e'},
+ colors:['#0c0c0c','#33ff66','#9effb3','#1e2e1e']},
+
+{id:'play',name:'Playful Rounded',cat:'ยอดนิยม',tag:'fun',tagTxt:'น่ารัก',feel:'มุมกลมโต สีอุ่น สดใส เป็นมิตร — ฟีลแอปครอบครัว/ของใช้ประจำวัน',use:'แอปครอบครัว, สมุดบันทึก, ของที่อบอุ่น',
+ t:{bg:'linear-gradient(180deg,#fff7ed,#ffedd5)',surface:'#ffffff',text:'#7c2d12',accent:'#ff9f43',radius:'18px',font:"'Sarabun',sans-serif",shadow:'0 2px 8px rgba(124,45,18,0.08)',border:'none',btn:'#ff9f43',btnTxt:'#ffffff',row:'#ffffff',rowTxt:'#7c2d12',nav:'#9a7b4f',icBg:'#ffedd5'},
+ colors:['#fff7ed','#ffedd5','#7c2d12','#ff9f43','#ffffff']},
+
+{id:'mat',name:'Material You',cat:'ยอดนิยม',tag:'',tagTxt:'Android',feel:'มาตรฐาน Android สีม่วงนวล มุมกลม เงาเบาๆ — คุ้นเคย ใช้งานง่าย',use:'แอป Android, แอปที่อยากได้มาตรฐานกลาง',
+ t:{bg:'#f4f4f9',surface:'#ffffff',text:'#1c1c28',accent:'#6750a4',radius:'16px',font:"'Sarabun',sans-serif",shadow:'0 2px 10px rgba(0,0,0,0.08)',border:'none',btn:'#6750a4',btnTxt:'#ffffff',row:'#ffffff',rowTxt:'#1c1c28',nav:'#67677d',icBg:'#eaddff'},
+ colors:['#f4f4f9','#ffffff','#1c1c28','#6750a4','#eaddff']},
+
+{id:'edit',name:'Editorial Serif',cat:'ยอดนิยม',tag:'',tagTxt:'สง่า',feel:'ฟอนต์ serif หัวเก๋า สีครีม สงบ — เหมือนนิตยสาร/หนังสือพิมพ์ดิจิทัล',use:'บล็อก, แอปข่าว, งานคอนเทนต์/ไลฟ์สไตล์',
+ t:{bg:'#faf9f6',surface:'#faf9f6',text:'#2d2a26',accent:'#2d2a26',radius:'2px',font:"Georgia,'Sarabun',serif",shadow:'none',border:'1px solid #e8e4da',btn:'#2d2a26',btnTxt:'#faf9f6',row:'#faf9f6',rowTxt:'#2d2a26',nav:'#a5a094',icBg:'#efece3'},
+ colors:['#faf9f6','#2d2a26','#8a8578','#e8e4da']},
+
+/* ---------- design systems จริง ---------- */
+{id:'stripe',name:'Stripe',cat:'Design System',tag:'brand',tagTxt:'Fintech หรู',feel:'ม่วง #533afd + กรมท่า + ฟอนต์บาง weight 300 + เงาสีน้ำเงิน — แพงแบบมืออาชีพ',use:'แอปเงิน, เว็บโปรดักต์, fintech',
+ t:{bg:'#ffffff',surface:'#ffffff',text:'#061b31',accent:'#533afd',radius:'6px',font:"'Source Sans 3','Sarabun',sans-serif",shadow:'rgba(50,50,93,0.25) 0px 20px 40px -20px',border:'1px solid #e5edf5',btn:'#533afd',btnTxt:'#ffffff',row:'#ffffff',rowTxt:'#273951',nav:'#061b31',icBg:'rgba(83,58,253,0.08)'},
+ colors:['#ffffff','#061b31','#533afd','#e5edf5','#64748d']},
+
+{id:'linear',name:'Linear',cat:'Design System',tag:'brand',tagTxt:'Dark dev',feel:'ดำเกือบสนิท #08090a + indigo #5e6ad2 + เส้นขอบโปร่งแสง — วิศวกรรมแม่นยำ',use:'เครื่องมือ dev, dashboard, แอปสายเทค',
+ t:{bg:'#08090a',surface:'rgba(255,255,255,0.02)',text:'#f7f8f8',accent:'#5e6ad2',radius:'8px',font:"'Inter','Sarabun',sans-serif",shadow:'rgba(0,0,0,0.4) 0px 4px 12px',border:'1px solid rgba(255,255,255,0.08)',btn:'#5e6ad2',btnTxt:'#ffffff',row:'rgba(255,255,255,0.02)',rowTxt:'#d0d6e0',nav:'#8a8f98',icBg:'rgba(113,112,255,0.12)'},
+ colors:['#08090a','#0f1011','#f7f8f8','#5e6ad2','#d0d6e0']},
+
+{id:'apple',name:'Apple',cat:'Design System',tag:'brand',tagTxt:'พรีเมียม',feel:'ดำ/ขาวสลับเป็นจังหวะ + สีน้ำเงิน #0071e3 จุดเดียวทั้งหน้า — เรียบง่ายที่สุดแต่แพงที่สุด',use:'เว็บโปรดักต์พรีเมียม, งานที่เน้นสินค้า',
+ t:{bg:'#f5f5f7',surface:'#ffffff',text:'#1d1d1f',accent:'#0071e3',radius:'12px',font:"system-ui,'Sarabun',sans-serif",shadow:'rgba(0,0,0,0.22) 3px 5px 30px 0px',border:'none',btn:'#0071e3',btnTxt:'#ffffff',row:'#ffffff',rowTxt:'#1d1d1f',nav:'#86868b',icBg:'#f0f0f5'},
+ colors:['#f5f5f7','#ffffff','#1d1d1f','#0071e3','#000000']},
+
+{id:'vercel',name:'Vercel',cat:'Design System',tag:'brand',tagTxt:'Black & white',feel:'ขาวดำบริสุทธิ์ ฟอนต์ Geist เรขาคณิต — เทคสะอาด ตรงไปตรงมา',use:'เว็บ dev, landing page, งานมินิมอลเทค',
+ t:{bg:'#ffffff',surface:'#ffffff',text:'#000000',accent:'#000000',radius:'6px',font:"'Inter','Sarabun',sans-serif",shadow:'0 2px 8px rgba(0,0,0,0.08)',border:'1px solid #eaeaea',btn:'#000000',btnTxt:'#ffffff',row:'#ffffff',rowTxt:'#666666',nav:'#666666',icBg:'#fafafa'},
+ colors:['#ffffff','#000000','#666666','#eaeaea']},
+
+{id:'spotify',name:'Spotify',cat:'Design System',tag:'brand',tagTxt:'เขียวสด',feel:'ดำ + เขียว #1db954 + ตัวหนา — มีชีวิต มีพลัง ดนตรี',use:'แอปเพลง, คอนเทนต์, ของที่อยากได้พลัง',
+ t:{bg:'#121212',surface:'#181818',text:'#ffffff',accent:'#1db954',radius:'8px',font:"'Sarabun',sans-serif",shadow:'0 4px 16px rgba(0,0,0,0.5)',border:'none',btn:'#1db954',btnTxt:'#000000',row:'#181818',rowTxt:'#b3b3b3',nav:'#b3b3b3',icBg:'#1db954'},
+ colors:['#121212','#181818','#ffffff','#1db954','#b3b3b3']},
+
+{id:'supabase',name:'Supabase',cat:'Design System',tag:'brand',tagTxt:'Emerald dev',feel:'เขียวมรกต #3ecf8e บนพื้นเข้ม — developer tool ที่อบอุ่น',use:'เครื่องมือ dev, dashboard, API',
+ t:{bg:'#171717',surface:'#1c1c1c',text:'#f8fafc',accent:'#3ecf8e',radius:'8px',font:"'Inter','Sarabun',sans-serif",shadow:'0 4px 16px rgba(0,0,0,0.4)',border:'1px solid #2a2a2a',btn:'#3ecf8e',btnTxt:'#171717',row:'#1c1c1c',rowTxt:'#a3a3a3',nav:'#8a8f98',icBg:'rgba(62,207,142,0.15)'},
+ colors:['#171717','#1c1c1c','#f8fafc','#3ecf8e','#a3a3a3']},
+
+{id:'revolut',name:'Revolut',cat:'Design System',tag:'brand',tagTxt:'Fintech มืด',feel:'ดำเรียบ + การ์ด gradient + สีสันสดใสบนพื้นมืด — fintech สมัยใหม่',use:'แอปเงิน, การ์ด, fintech',
+ t:{bg:'#0b0b12',surface:'#13131d',text:'#ffffff',accent:'#c6f432',radius:'14px',font:"'Sarabun',sans-serif",shadow:'0 6px 24px rgba(0,0,0,0.5)',border:'1px solid rgba(255,255,255,0.08)',btn:'#c6f432',btnTxt:'#0b0b12',row:'#13131d',rowTxt:'#9a9ab0',nav:'#9a9ab0',icBg:'linear-gradient(135deg,#f44,#c6f432)'},
+ colors:['#0b0b12','#13131d','#ffffff','#c6f432','#9a9ab0']},
+
+{id:'notion',name:'Notion',cat:'Design System',tag:'brand',tagTxt:'Warm minimal',feel:'พื้นนวล อบอุ่น หัวเรื่อง serif เนื้อหาเรียบ — เหมือนสมุดจดดิจิทัล',use:'note-taking, wiki, workspace',
+ t:{bg:'#ffffff',surface:'#f7f6f3',text:'#37352f',accent:'#37352f',radius:'6px',font:"Georgia,'Sarabun',serif",shadow:'none',border:'1px solid #e9e9e7',btn:'#37352f',btnTxt:'#ffffff',row:'#f7f6f3',rowTxt:'#37352f',nav:'#9b9a97',icBg:'#e9e9e7'},
+ colors:['#ffffff','#f7f6f3','#37352f','#9b9a97','#e9e9e7']},
+
+{id:'coinbase',name:'Coinbase',cat:'Design System',tag:'brand',tagTxt:'Blue trust',feel:'ฟ้า #1652f0 สะอาด น่าเชื่อถือ — สถาบันการเงินที่ไว้ใจได้',use:'crypto, แอปเงิน, งานที่เน้นความน่าเชื่อถือ',
+ t:{bg:'#ffffff',surface:'#ffffff',text:'#0a0b0d',accent:'#1652f0',radius:'8px',font:"'Sarabun',sans-serif",shadow:'0 2px 10px rgba(0,0,0,0.06)',border:'1px solid #eef0f3',btn:'#1652f0',btnTxt:'#ffffff',row:'#ffffff',rowTxt:'#5b616e',nav:'#5b616e',icBg:'#e8edfd'},
+ colors:['#ffffff','#0a0b0d','#1652f0','#5b616e','#eef0f3']},
+
+{id:'airbnb',name:'Airbnb',cat:'Design System',tag:'brand',tagTxt:'Coral warm',feel:'ปะการัง #ff385c อบอุ่น มุมกลม เน้นภาพ — เป็นมิตร ท่องเที่ยว',use:'แอปท่องเที่ยว, จองที่พัก, คอนเทนต์รูปเยอะ',
+ t:{bg:'#ffffff',surface:'#ffffff',text:'#222222',accent:'#ff385c',radius:'12px',font:"'Sarabun',sans-serif",shadow:'0 2px 12px rgba(0,0,0,0.08)',border:'1px solid #dddddd',btn:'#ff385c',btnTxt:'#ffffff',row:'#ffffff',rowTxt:'#717171',nav:'#717171',icBg:'#fff0f3'},
+ colors:['#ffffff','#222222','#ff385c','#717171','#dddddd']},
+];
+
+/* ---------- render phone mockup จาก tokens ---------- */
+const ICONS = ['🛒','💼','☕'];
+const NAMES = ['เซเว่น','เงินเดือน','คาเฟ่'];
+const AMTS  = ['-฿89','+฿25,000','-฿120'];
+
+function phoneHTML(s){
+  const t=s.t;
+  return `<div class="phone" style="background:${t.bg}">
+    <div class="ph" style="background:${t.surface};backdrop-filter:${t.bg.includes('gradient')?'blur(14px)':'none'};border:${t.border};border-radius:18px">
+      <div class="p-top" style="color:${t.text};opacity:.75"><span>09:41</span><span>📶 🔋</span></div>
+      <div class="p-greet" style="color:${t.text}">สวัสดี, พี่เต้ย</div>
+      <div class="p-name" style="color:${t.text}">ยอดเงินคงเหลือ</div>
+      <div class="p-bal" style="color:${t.text};font-family:${t.font}">฿24,850.75</div>
+      <div class="p-btns">
+        <div class="p-btn" style="background:${t.btn};color:${t.btnTxt};border-radius:${t.radius}">+ โอนเข้า</div>
+        <div class="p-btn" style="background:${t.btn};color:${t.btnTxt};border-radius:${t.radius}">โอนออก</div>
+      </div>
+      <div class="p-list">
+        ${[0,1,2].map(i=>`<div class="p-row" style="background:${t.row};color:${t.rowTxt};border-radius:${t.radius};box-shadow:${t.shadow}">
+          <span class="l"><span class="ic" style="background:${t.icBg}">${ICONS[i]}</span> ${NAMES[i]}</span>
+          <span class="amt" style="opacity:${i===1?1:.85}">${AMTS[i]}</span>
+        </div>`).join('')}
+      </div>
+      <div class="p-nav" style="color:${t.nav}"><span class="on" style="color:${t.accent}">บ้าน</span><span>สถิติ</span><span>บัญชี</span><span>ตั้งค่า</span></div>
+    </div>
+  </div>`;
+}
+
+/* ---------- state ---------- */
+let selCat = 'ทั้งหมด';
+let selected = null;
+
+/* ---------- render grid ---------- */
+function cats(){
+  const c = ['ทั้งหมด', ...new Set(STYLES.map(s=>s.cat))];
+  document.getElementById('cats').innerHTML = c.map(x=>`<button class="cat-btn ${x===selCat?'on':''}" data-cat="${x}">${x}</button>`).join('');
+  document.querySelectorAll('.cat-btn').forEach(b=>b.addEventListener('click',()=>{selCat=b.dataset.cat;render();}));
+}
+function render(){
+  cats();
+  const list = selCat==='ทั้งหมด'?STYLES:STYLES.filter(s=>s.cat===selCat);
+  const g = document.getElementById('grid');
+  g.innerHTML = list.map(s=>`
+    <div class="item ${selected&&selected.id===s.id?'sel':''}" data-id="${s.id}">
+      <div class="chk">✓</div>
+      <div class="meta"><h3>${s.name}</h3><span class="tag ${s.tag}">${s.tagTxt}</span></div>
+      <p class="feel">${s.feel}</p>
+      ${phoneHTML(s)}
+    </div>`).join('');
+  g.querySelectorAll('.item').forEach(el=>el.addEventListener('click',()=>select(el.dataset.id)));
+}
+
+/* ---------- select + panel ---------- */
+function select(id){
+  selected = STYLES.find(s=>s.id===id);
+  render();
+  document.getElementById('btnExport').disabled = false;
+  openPanel(selected);
+}
+function openPanel(s){
+  document.getElementById('pTitle').textContent = s.name;
+  document.getElementById('pFeel').textContent = s.feel + ' — ' + s.use;
+  refreshPanel(s);
+  window.__origT = JSON.stringify(s.t);
+  buildEditor(s);
+  const rv = parseInt(s.t.radius)||12;
+  document.getElementById('rRadius').value = Math.min(Math.max(rv,0),32);
+  document.getElementById('rRadiusVal').textContent = rv;
+  document.getElementById('fFont').value = s.t.font;
+  document.getElementById('panel').classList.add('open');
+}
+function refreshPanel(s){
+  s = s || selected;
+  document.getElementById('pPhone').innerHTML = phoneHTML(s);
+  document.getElementById('pSwatches').innerHTML = s.colors.map(c=>`<div class="sw-item"><div class="sw" style="background:${c}"></div><span>${c}</span></div>`).join('');
+  const t=s.t;
+  const rows=[['พื้นหลัง',t.bg],['พื้นผิว',t.surface],['ตัวอักษร',t.text],['สีหลัก/ปุ่ม',t.accent],['มุมโค้ง',t.radius],['ฟอนต์',t.font],['เงา',t.shadow],['เส้นขอบ',t.border]];
+  document.getElementById('pTokens').innerHTML = rows.map(r=>`<div class="tok"><span class="k">${r[0]}</span><span class="v"><span class="swatch" style="background:${r[1]}"></span>${r[1]}</span></div>`).join('');
+}
+function closePanel(){document.getElementById('panel').classList.remove('open');}
+document.getElementById('pClose').addEventListener('click',closePanel);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanel();});
+
+/* ---------- editor: ปรับแต่งสี/ฟอนต์/มุมก่อนดาวน์โหลด ---------- */
+const EDIT_FIELDS = [
+  ['accent','สีหลัก / ปุ่ม'],
+  ['text','ตัวอักษร'],
+  ['surface','พื้นผิว'],
+  ['bg','พื้นหลัง'],
+  ['btn','สีปุ่ม'],
+  ['btnTxt','ข้อความปุ่ม'],
+  ['row','แถวรายการ'],
+  ['rowTxt','ข้อความแถว'],
+  ['nav','แถบล่าง'],
+  ['icBg','ไอคอน'],
+];
+function buildEditor(s){
+  const t=s.t;
+  const el=document.getElementById('pEdit');
+  let html='';
+  for(const [k,label] of EDIT_FIELDS){
+    const val=t[k];
+    // พื้นหลังพิเศษ: แยกจุดสี gradient → หลาย color picker
+    if(k==='bg' && /^linear-gradient/.test(val)){
+      const pts = val.split(',').slice(1).map(p=>p.trim().split(/\s+/)[0]); // สีของแต่ละ stop
+      html += `<div class="edit-item"><span class="el">${label}</span><div class="bg-pts">` +
+        pts.map((c,i)=>`<input type="color" data-bgpt="${i}" value="${c}">`).join('') +
+        `</div><input type="text" class="txt" data-field="bg" value="${val}"></div>`;
+    } else {
+      const isHex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(val);
+      html += `<div class="edit-item"><span class="el">${label}</span>` +
+        (isHex ? `<input type="color" data-field="${k}" value="${val}">` : '') +
+        `<input type="text" class="txt" data-field="${k}" value="${val}"></div>`;
+    }
+  }
+  el.innerHTML = html;
+  // ผูก events
+  el.querySelectorAll('input[type=color][data-field]').forEach(inp=>{
+    inp.addEventListener('input',()=>{ selected.t[inp.dataset.field] = inp.value; syncTxt(inp.dataset.field); refreshPanel(); });
+  });
+  el.querySelectorAll('input[type=color][data-bgpt]').forEach(inp=>{
+    inp.addEventListener('input',()=>{ applyBgPoint(parseInt(inp.dataset.bgpt), inp.value); });
+  });
+  el.querySelectorAll('input.txt').forEach(inp=>{
+    inp.addEventListener('input',()=>{ selected.t[inp.dataset.field] = inp.value; syncPicker(inp.dataset.field); refreshPanel(); });
+  });
+}
+function syncTxt(k){ const t=document.querySelector(`#pEdit input.txt[data-field="${k}"]`); if(t && t.value!==selected.t[k]) t.value=selected.t[k]; }
+function syncPicker(k){ const p=document.querySelector(`#pEdit input[type=color][data-field="${k}"]`); if(p && /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(selected.t[k])) p.value=selected.t[k]; }
+function applyBgPoint(idx, color){
+  const t=selected.t;
+  if(!/^linear-gradient/.test(t.bg)) return;
+  const parts=t.bg.split(',').map(p=>p.trim());
+  const angle=parts[0];
+  const stops=parts.slice(1).map(s=>{const [c,pos]=s.split(/\s+/);return {c,pos:(pos||'').replace(/\)/g,'')};});
+  if(stops[idx]){ stops[idx].c = color; }
+  const degM = angle.match(/linear-gradient\((\S+)/);
+  const deg = degM ? degM[1] : '135deg';
+  t.bg = `linear-gradient(${deg}, ` + stops.map(s=>s.pos?`${s.c} ${s.pos}`:s.c).join(', ') + `)`;
+  syncTxt('bg'); refreshPanel();
+}
+// ฟอนต์ + มุมโค้ง
+document.getElementById('fFont').addEventListener('change', e=>{ if(selected){ selected.t.font=e.target.value; refreshPanel(); } });
+document.getElementById('rRadius').addEventListener('input', e=>{ if(selected){ selected.t.radius=e.target.value+'px'; document.getElementById('rRadiusVal').textContent=e.target.value; refreshPanel(); } });
+// รีเซ็ต
+document.getElementById('pReset').addEventListener('click', ()=>{
+  if(!selected || !window.__origT) return;
+  selected.t = JSON.parse(window.__origT);
+  buildEditor(selected);
+  const rv=parseInt(selected.t.radius)||12;
+  document.getElementById('rRadius').value=Math.min(Math.max(rv,0),32);
+  document.getElementById('rRadiusVal').textContent=rv;
+  document.getElementById('fFont').value=selected.t.font;
+  refreshPanel();
+  toast('↺ รีเซ็ตเป็นค่าเดิมแล้ว');
+});
+
+/* ---------- export ---------- */
+function cssText(s){
+  const t=s.t;
+  return `/* ============================================
+   UI Style: ${s.name} (${s.tagTxt})
+   สร้างจาก UI Style Picker — วางใน <style> หรือไฟล์ css ได้เลย
+   ============================================ */
+:root{
+  --ui-name: "${s.name}";
+  --ui-bg: ${t.bg};
+  --ui-surface: ${t.surface};
+  --ui-text: ${t.text};
+  --ui-accent: ${t.accent};
+  --ui-radius: ${t.radius};
+  --ui-font: ${t.font};
+  --ui-shadow: ${t.shadow};
+  --ui-border: ${t.border};
+  --ui-btn-bg: ${t.btn};
+  --ui-btn-text: ${t.btnTxt};
+  --ui-row-bg: ${t.row};
+  --ui-row-text: ${t.rowTxt};
+  --ui-nav: ${t.nav};
+  --ui-icon-bg: ${t.icBg};
+}
+
+/* ตัวอย่างการใช้งาน */
+.ui-card{
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  border: var(--ui-border);
+  border-radius: var(--ui-radius);
+  box-shadow: var(--ui-shadow);
+  font-family: var(--ui-font);
+}
+.ui-btn{
+  background: var(--ui-btn-bg);
+  color: var(--ui-btn-text);
+  border: none;
+  border-radius: var(--ui-radius);
+  padding: 10px 18px;
+  font-family: var(--ui-font);
+  cursor: pointer;
+}
+`;
+}
+function download(filename, text){
+  const blob = new Blob([text],{type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+document.getElementById('pExportCss').addEventListener('click',()=>{
+  if(!selected)return;
+  download(`ui-style-${selected.id}.css`, cssText(selected));
+  toast('⬇ ดาวน์โหลด ui-style-'+selected.id+'.css แล้ว!');
+});
+document.getElementById('pCopyCss').addEventListener('click',async()=>{
+  if(!selected)return;
+  try{
+    await navigator.clipboard.writeText(cssText(selected));
+    toast('📋 คัดลอก CSS แล้ว! ไปวางในโปรเจคได้เลย');
+  }catch(e){
+    download(`ui-style-${selected.id}.css`, cssText(selected));
+    toast('⬇ บราวเซอร์ไม่ให้ copy — ดาวน์โหลดไฟล์แทนแล้ว');
+  }
+});
+document.getElementById('btnExport').addEventListener('click',()=>{
+  if(!selected)return;
+  download(`ui-style-${selected.id}.css`, cssText(selected));
+  toast('⬇ ดาวน์โหลด ui-style-'+selected.id+'.css แล้ว!');
+});
+
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+render();
+</script>
+</body>
+</html>

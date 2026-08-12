@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI Studio — Glassmorphism (17 components)</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Sarabun',sans-serif;background:var(--ui-bg);color:var(--ui-text);margin:0;padding:24px}
+h2{font-family:var(--ui-font);opacity:.6;font-size:.9rem;font-weight:400}
+:root{
+  --ui-bg:linear-gradient(135deg,#667eea 0%,#764ba2 55%,#f093fb 100%);
+  --ui-surface:rgba(255,255,255,0.14);
+  --ui-text:#ffffff;
+  --ui-accent:#ffffff;
+  --ui-radius:18px;
+  --ui-font:'Sarabun',sans-serif;
+  --ui-shadow:0 8px 24px rgba(0,0,0,0.35);
+  --ui-border:1px solid rgba(255,255,255,0.3);
+  --ui-btn-bg:rgba(255,255,255,0.35);
+  --ui-btn-text:#ffffff;
+  --ui-row-bg:rgba(255,255,255,0.18);
+  --ui-row-text:#ffffff;
+  --ui-nav:rgba(255,255,255,0.7);
+  --ui-icon-bg:rgba(255,255,255,0.3);
+}
+.demo-scope{--b:var(--ui-bg);--s:var(--ui-surface);--tx:var(--ui-text);--a:var(--ui-accent);--r:var(--ui-radius);--f:var(--ui-font);--sh:var(--ui-shadow);--bd:var(--ui-border);--bb:var(--ui-btn-bg);--bt:var(--ui-btn-text);--rb:var(--ui-row-bg);--rt:var(--ui-row-text);--nv:var(--ui-nav);--ib:var(--ui-icon-bg)}
+.demo-scope *{font-family:var(--f)}
+
+/* ปุ่มหลากแบบ */
+.xbtn{background:var(--bb);color:var(--bt);border:none;border-radius:var(--r);padding:8px 16px;font-size:0.82rem;font-weight:600;cursor:pointer}
+.xbtn.ghost{background:transparent;color:var(--a);border:1px solid var(--a)}
+.xbtn.warn{background:#dc2626;color:#fff}
+
+/* ปุ่มค้นหา */
+.xsearch{display:flex;align-items:center;gap:8px;background:var(--s);border:var(--bd);border-radius:var(--r);padding:7px 12px;box-shadow:var(--sh)}
+.xsearch input{flex:1;border:none;background:none;color:var(--tx);font-size:0.82rem;outline:none}
+.xsearch .go{background:var(--bb);color:var(--bt);border:none;border-radius:calc(var(--r)/2);padding:5px 11px;font-size:0.72rem;cursor:pointer;font-weight:600}
+
+/* การ์ด */
+.xcard{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:16px}
+.xcard .ct{font-size:0.9rem;font-weight:700;color:var(--tx);margin-bottom:3px}
+.xcard .cs{font-size:0.75rem;color:var(--nv);margin-bottom:10px}
+.xcard .cb{font-size:0.78rem;color:var(--rt);line-height:1.5;margin-bottom:10px}
+
+/* แถบนำทาง */
+.xnav{display:flex;align-items:center;justify-content:space-between;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:9px 14px}
+.xnav .brand{font-weight:700;color:var(--tx);font-size:0.85rem}
+.xnav a{color:var(--nv);font-size:0.76rem;text-decoration:none}
+.xnav a.on{color:var(--a);font-weight:700}
+
+/* ฟอร์ม */
+.xform{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:16px}
+.xform label{display:block;font-size:0.72rem;color:var(--nv);margin-bottom:3px}
+.xform input{width:100%;background:var(--rb);border:var(--bd);border-radius:calc(var(--r)/2);padding:7px 9px;color:var(--tx);font-size:0.8rem;margin-bottom:9px;outline:none}
+.xform input:focus{border-color:var(--a)}
+
+/* ตาราง */
+.xtable{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.xtable table{width:100%;border-collapse:collapse;font-size:0.76rem}
+.xtable th{background:var(--ib);color:var(--tx);padding:8px 11px;text-align:left}
+.xtable td{color:var(--rt);padding:7px 11px;border-top:var(--bd)}
+.xtable .amt{text-align:right;font-weight:600}
+
+/* สถิติ */
+.xstat{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:14px;text-align:center}
+.xstat .num{font-size:1.2rem;font-weight:700;color:var(--tx)}
+.xstat .lbl2{font-size:0.7rem;color:var(--nv);margin-top:2px}
+
+/* Badge สถานะ */
+.xbadge{display:inline-flex;align-items:center;gap:5px;background:var(--ib);color:var(--a);border-radius:99px;padding:3px 11px;font-size:0.7rem;font-weight:600}
+.xbadge.ok{background:rgba(74,222,128,0.15);color:#86efac}
+.xbadge.warn{background:rgba(252,211,77,0.15);color:#fde047}
+
+/* Toggle */
+.xtoggle{width:42px;height:23px;border-radius:99px;background:var(--ib);position:relative;cursor:pointer;border:var(--bd)}
+.xtoggle::after{content:'';position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s}
+.xtoggle.on{background:var(--a)}
+.xtoggle.on::after{left:21px}
+
+/* Dropdown */
+.xdropdown{position:relative}
+.xdd-btn{width:100%;display:flex;justify-content:space-between;align-items:center;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:8px 12px;font-size:0.8rem;color:var(--tx);cursor:pointer}
+.xdd-menu{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,0.2);padding:4px}
+.xdd-item{padding:7px 10px;font-size:0.78rem;color:var(--rt);border-radius:calc(var(--r)/2);cursor:pointer}
+.xdd-item:hover{background:var(--ib);color:var(--tx)}
+
+/* Tabs */
+.xtabs{display:flex;gap:4px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:4px}
+.xtab{flex:1;text-align:center;padding:7px 8px;font-size:0.75rem;color:var(--nv);border-radius:calc(var(--r)/2);cursor:pointer}
+.xtab.on{background:var(--bb);color:var(--bt);font-weight:600}
+
+/* Progress Bar */
+.xprog .pl{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--nv);margin-bottom:4px}
+.xprog .ptrack{height:8px;border-radius:99px;background:var(--ib);overflow:hidden}
+.xprog .pfill{height:100%;border-radius:99px;background:var(--a)}
+
+/* Avatar + ชื่อ */
+.xavatar{display:flex;gap:8px;align-items:center;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:10px 14px}
+.xavatar .av{width:38px;height:38px;border-radius:50%;background:var(--a);color:var(--bt);display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:700}
+.xavatar .an{font-size:0.82rem;font-weight:600;color:var(--tx)}
+.xavatar .as{font-size:0.7rem;color:var(--nv)}
+
+/* Toast แจ้งเตือน */
+.xtoast{display:flex;align-items:center;gap:10px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,0.25);padding:10px 14px}
+.xtoast .ti{width:28px;height:28px;border-radius:50%;background:var(--a);color:var(--bt);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0}
+.xtoast .tm{flex:1;font-size:0.78rem;color:var(--tx)}
+.xtoast .tx{color:var(--nv);font-size:0.9rem;cursor:pointer}
+
+/* Alert แจ้งเตือน */
+.xalert{display:flex;align-items:flex-start;gap:10px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:12px 14px}
+.xalert .ai{font-size:1rem;flex-shrink:0}
+.xalert .at{font-size:0.82rem;font-weight:600;color:var(--tx);margin-bottom:2px}
+.xalert .ad{font-size:0.75rem;color:var(--rt);line-height:1.4}
+
+/* Empty State */
+.xempty{text-align:center;padding:22px 16px}
+.xempty .ei{width:52px;height:52px;border-radius:50%;background:var(--ib);color:var(--a);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px}
+.xempty .et{font-size:0.85rem;font-weight:600;color:var(--tx);margin-bottom:4px}
+.xempty .ed{font-size:0.72rem;color:var(--nv);margin-bottom:12px}
+
+/* Sidebar + Bottom-nav */
+.xframe{display:flex;gap:10px;align-items:stretch}
+.xsidebar{width:46px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.xsidebar .si{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:var(--nv)}
+.xsidebar .si.on{background:var(--a);color:var(--bt)}
+.xbnav{flex:1;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:8px;display:flex;align-items:flex-end;justify-content:space-around}
+.xbnav .bi{font-size:0.8rem;color:var(--nv);text-align:center}
+.xbnav .bi.on{color:var(--a)}
+.xbnav .bi small{display:block;font-size:0.55rem;margin-top:2px}
+</style>
+</head>
+<body>
+<h2>UI Studio — Glassmorphism · 17 components</h2>
+<div style="margin:14px;display:flex;justify-content:center"><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="xbtn">ปุ่มหลัก</button><button class="xbtn ghost">เส้นขอบ</button><button class="xbtn warn">ลบ</button></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xsearch"><input placeholder="ค้นหาอะไรสักอย่าง..."><button class="go">ค้นหา</button></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xcard"><div class="ct">บัตรสมาชิก</div><div class="cs">Premium Plan</div><div class="cb">สิทธิประโยชน์ครบทุกอย่าง สำหรับสมาชิกระดับสูง</div><button class="xbtn" style="width:100%">ดูรายละเอียด</button></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xnav"><span class="brand">แบรนด์</span><span style="display:flex;gap:12px"><a class="on">หน้าแรก</a><a>รายการ</a><a>บัญชี</a></span></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xform"><label>อีเมล</label><input placeholder="you@email.com"><label>รหัสผ่าน</label><input type="password"><button class="xbtn" style="width:100%">เข้าสู่ระบบ</button></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xtable"><table><tr><th>รายการ</th><th class="amt">จำนวน</th></tr><tr><td>เซเว่น</td><td class="amt">-฿89</td></tr><tr><td>เงินเดือน</td><td class="amt">+฿25,000</td></tr><tr><td>คาเฟ่</td><td class="amt">-฿120</td></tr></table></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><div class="xstat"><div class="num">฿24,850</div><div class="lbl2">คงเหลือ</div></div><div class="xstat"><div class="num">+฿5,000</div><div class="lbl2">รายได้</div></div><div class="xstat"><div class="num">-฿1,200</div><div class="lbl2">รายจ่าย</div></div></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><span class="xbadge">หมวด</span><span class="xbadge ok">สำเร็จ</span><span class="xbadge warn">รอทำ</span></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div style="display:flex;gap:12px;align-items:center"><div class="xtoggle on"></div><div class="xtoggle"></div></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xdropdown"><button class="xdd-btn">เลือกหมวด <span>▾</span></button><div class="xdd-menu show"><div class="xdd-item">ทั้งหมด</div><div class="xdd-item">รายรับ</div><div class="xdd-item">รายจ่าย</div></div></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xtabs"><div class="xtab on">ทั้งหมด</div><div class="xtab">รายรับ</div><div class="xtab">รายจ่าย</div></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xprog"><div class="pl"><span>ความคืบหน้า</span><span>75%</span></div><div class="ptrack"><div class="pfill" style="width:75%"></div></div></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xavatar"><div class="av">ต</div><div><div class="an">พี่เต้ย</div><div class="as">ออนไลน์</div></div></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xtoast"><div class="ti">✓</div><div class="tm">บันทึกสำเร็จแล้ว!</div><div class="tx">✕</div></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xalert"><div class="ai">⚠️</div><div><div class="at">กรุณาตรวจสอบ</div><div class="ad">ยอดเงินไม่เพียงพอสำหรับการทำรายการนี้</div></div></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xempty"><div class="ei">📭</div><div class="et">ยังไม่มีรายการ</div><div class="ed">เริ่มเพิ่มรายการแรกของคุณ</div><button class="xbtn">+ เพิ่มเลย</button></div></div>
+<div style="margin:14px;display:flex;justify-content:center"><div class="xframe"><div class="xsidebar"><div class="si on">🏠</div><div class="si">📊</div><div class="si">👤</div><div class="si">⚙️</div></div><div class="xbnav"><div class="bi on">🏠<small>บ้าน</small></div><div class="bi">📊<small>สถิติ</small></div><div class="bi">👤<small>บัญชี</small></div><div class="bi">⚙️<small>ตั้งค่า</small></div></div></div></div>
+</body>
+</html>

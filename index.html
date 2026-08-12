@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI Studio — เลือกลุค + เลือก component → Export ไฟล์พร้อมใช้</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --appbg:#0d0e14; --card:#171923; --card2:#1d2030; --line:#2a2d3d; --text:#f2f3f7; --sub:#9aa0b5; --acc:#7c6cff; --ok:#4ade80;
+    /* theme tokens (default Flat) */
+    --ui-bg:#f5f5f7; --ui-surface:#ffffff; --ui-text:#1d1d1f; --ui-accent:#0071e3;
+    --ui-radius:8px; --ui-font:'Sarabun',sans-serif; --ui-shadow:0 2px 10px rgba(0,0,0,0.08);
+    --ui-border:1px solid #f0f0f2; --ui-btn-bg:#0071e3; --ui-btn-text:#ffffff;
+    --ui-row-bg:#ffffff; --ui-row-text:#1d1d1f; --ui-nav:#86868b; --ui-icon-bg:#f0f0f5;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--appbg);color:var(--text);font-family:'Sarabun',sans-serif}
+  header{position:sticky;top:0;z-index:50;background:rgba(13,14,20,0.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  header h1{font-size:1.1rem;font-weight:700}
+  header h1 span{background:linear-gradient(90deg,#7c6cff,#4fc3f7,#ff6ec7);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .h-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .h-right label{font-size:0.78rem;color:var(--sub)}
+  .h-right select{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px 10px;font-size:0.82rem;font-family:'Sarabun'}
+  .btn{background:var(--card2);border:1px solid var(--line);color:var(--text);padding:8px 14px;border-radius:10px;font-size:0.82rem;font-family:'Sarabun';cursor:pointer;transition:.2s;font-weight:500}
+  .btn:hover{border-color:var(--acc)}
+  .btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+  .btn.primary:hover{filter:brightness(1.15)}
+  .wrap{max-width:1200px;margin:0 auto;padding:18px}
+  .steps{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:0.78rem;color:var(--sub)}
+  .step b{color:var(--text);font-size:0.85rem}
+  .step .n{display:inline-flex;width:18px;height:18px;border-radius:50%;background:var(--acc);color:#fff;align-items:center;justify-content:center;font-size:0.7rem;margin-right:6px}
+  .cats{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+  .cat-btn{background:var(--card);border:1px solid var(--line);color:var(--sub);padding:6px 15px;border-radius:99px;font-size:0.8rem;cursor:pointer;white-space:nowrap;transition:.2s;font-family:'Sarabun'}
+  .cat-btn.on{background:rgba(124,108,255,0.15);border-color:var(--acc);color:#c9c0ff;font-weight:600}
+  .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+  .bar .lbl{font-size:0.85rem;color:var(--sub)}
+  .bar .lbl b{color:var(--text)}
+  .bar-actions{display:flex;gap:8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+  .c-block{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative;transition:.2s}
+  .c-block.sel{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc)}
+  .c-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line)}
+  .c-name{font-size:0.82rem;font-weight:600;display:flex;align-items:center;gap:7px}
+  .c-name .em{font-size:0.68rem;color:var(--sub);font-weight:400}
+  .c-check{display:flex;align-items:center;gap:6px}
+  .c-check input{width:17px;height:17px;accent-color:var(--acc);cursor:pointer}
+  .c-check label{font-size:0.7rem;color:var(--sub);cursor:pointer}
+  .c-body{background:#101218;padding:20px;min-height:110px;display:flex;align-items:center;justify-content:center}
+  .c-copy{width:100%;background:none;border:none;border-top:1px solid var(--line);color:#7fd4f8;padding:8px;font-size:0.72rem;cursor:pointer;font-family:'Sarabun'}
+  .c-copy:hover{background:rgba(127,212,248,0.08)}
+  /* ===== ตัวอย่าง component ใช้ CSS variables ===== */
+  .demo-scope{--b:var(--ui-bg);--s:var(--ui-surface);--tx:var(--ui-text);--a:var(--ui-accent);--r:var(--ui-radius);--f:var(--ui-font);--sh:var(--ui-shadow);--bd:var(--ui-border);--bb:var(--ui-btn-bg);--bt:var(--ui-btn-text);--rb:var(--ui-row-bg);--rt:var(--ui-row-text);--nv:var(--ui-nav);--ib:var(--ui-icon-bg)}
+  .demo-scope *{font-family:var(--f)}
+  .xbtn{background:var(--bb);color:var(--bt);border:none;border-radius:var(--r);padding:8px 16px;font-size:0.82rem;font-weight:600;cursor:pointer}
+  .xbtn.ghost{background:transparent;color:var(--a);border:1px solid var(--a)}
+  .xbtn.warn{background:#dc2626;color:#fff}
+  .xsearch{display:flex;align-items:center;gap:8px;background:var(--s);border:var(--bd);border-radius:var(--r);padding:7px 12px;box-shadow:var(--sh);width:100%;max-width:240px}
+  .xsearch input{flex:1;border:none;background:none;color:var(--tx);font-size:0.82rem;outline:none;font-family:var(--f)}
+  .xsearch input::placeholder{color:var(--nv)}
+  .xsearch .go{background:var(--bb);color:var(--bt);border:none;border-radius:calc(var(--r)/2);padding:5px 11px;font-size:0.72rem;cursor:pointer;font-weight:600}
+  .xcard{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:16px;width:100%;max-width:230px}
+  .xcard .ct{font-size:0.9rem;font-weight:700;color:var(--tx);margin-bottom:3px}
+  .xcard .cs{font-size:0.75rem;color:var(--nv);margin-bottom:10px}
+  .xcard .cb{font-size:0.78rem;color:var(--rt);line-height:1.5;margin-bottom:10px}
+  .xnav{display:flex;align-items:center;justify-content:space-between;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:9px 14px;width:100%;max-width:280px}
+  .xnav .brand{font-weight:700;color:var(--tx);font-size:0.85rem}
+  .xnav a{color:var(--nv);font-size:0.76rem;text-decoration:none}
+  .xnav a.on{color:var(--a);font-weight:700}
+  .xform{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:16px;width:100%;max-width:230px}
+  .xform label{display:block;font-size:0.72rem;color:var(--nv);margin-bottom:3px}
+  .xform input{width:100%;background:var(--rb);border:var(--bd);border-radius:calc(var(--r)/2);padding:7px 9px;color:var(--tx);font-size:0.8rem;margin-bottom:9px;outline:none;font-family:var(--f)}
+  .xform input:focus{border-color:var(--a)}
+  .xtable{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;width:100%;max-width:300px}
+  .xtable table{width:100%;border-collapse:collapse;font-size:0.76rem}
+  .xtable th{background:var(--ib);color:var(--tx);padding:8px 11px;text-align:left}
+  .xtable td{color:var(--rt);padding:7px 11px;border-top:var(--bd)}
+  .xtable .amt{text-align:right;font-weight:600}
+  .xbadge{display:inline-flex;align-items:center;gap:5px;background:var(--ib);color:var(--a);border-radius:99px;padding:3px 11px;font-size:0.7rem;font-weight:600}
+  .xbadge.ok{background:rgba(74,222,128,0.15);color:#86efac}
+  .xbadge.warn{background:rgba(252,211,77,0.15);color:#fde047}
+  .xtoggle{width:42px;height:23px;border-radius:99px;background:var(--ib);position:relative;cursor:pointer;border:var(--bd)}
+  .xtoggle::after{content:'';position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s}
+  .xtoggle.on{background:var(--a)}
+  .xtoggle.on::after{left:21px}
+  .xstat{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:14px;text-align:center;width:100%;max-width:120px}
+  .xstat .num{font-size:1.2rem;font-weight:700;color:var(--tx)}
+  .xstat .lbl2{font-size:0.7rem;color:var(--nv);margin-top:2px}
+  /* dropdown */
+  .xdropdown{position:relative;width:100%;max-width:180px}
+  .xdd-btn{width:100%;display:flex;justify-content:space-between;align-items:center;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:8px 12px;font-size:0.8rem;color:var(--tx);cursor:pointer;font-family:var(--f)}
+  .xdd-menu{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,0.2);padding:4px;display:none;z-index:20}
+  .xdd-menu.show{display:block}
+  .xdd-item{padding:7px 10px;font-size:0.78rem;color:var(--rt);border-radius:calc(var(--r)/2);cursor:pointer}
+  .xdd-item:hover{background:var(--ib);color:var(--tx)}
+  /* tabs */
+  .xtabs{display:flex;gap:4px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:4px;width:100%;max-width:260px}
+  .xtab{flex:1;text-align:center;padding:7px 8px;font-size:0.75rem;color:var(--nv);border-radius:calc(var(--r)/2);cursor:pointer;font-family:var(--f)}
+  .xtab.on{background:var(--bb);color:var(--bt);font-weight:600}
+  /* progress */
+  .xprog{width:100%;max-width:220px}
+  .xprog .pl{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--nv);margin-bottom:4px}
+  .xprog .ptrack{height:8px;border-radius:99px;background:var(--ib);overflow:hidden}
+  .xprog .pfill{height:100%;border-radius:99px;background:var(--a);transition:.3s}
+  /* avatar */
+  .xavatar{display:flex;gap:8px;align-items:center;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:10px 14px}
+  .xavatar .av{width:38px;height:38px;border-radius:50%;background:var(--a);color:var(--bt);display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:700}
+  .xavatar .an{font-size:0.82rem;font-weight:600;color:var(--tx)}
+  .xavatar .as{font-size:0.7rem;color:var(--nv)}
+  /* toast */
+  .xtoast{display:flex;align-items:center;gap:10px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,0.25);padding:10px 14px;width:100%;max-width:260px}
+  .xtoast .ti{width:28px;height:28px;border-radius:50%;background:var(--a);color:var(--bt);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0}
+  .xtoast .tm{flex:1;font-size:0.78rem;color:var(--tx)}
+  .xtoast .tx{color:var(--nv);font-size:0.9rem;cursor:pointer}
+  /* alert */
+  .xalert{display:flex;align-items:flex-start;gap:10px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:12px 14px;width:100%;max-width:280px}
+  .xalert .ai{font-size:1rem;flex-shrink:0}
+  .xalert .at{font-size:0.82rem;font-weight:600;color:var(--tx);margin-bottom:2px}
+  .xalert .ad{font-size:0.75rem;color:var(--rt);line-height:1.4}
+  /* empty state */
+  .xempty{text-align:center;padding:22px 16px;width:100%;max-width:220px}
+  .xempty .ei{width:52px;height:52px;border-radius:50%;background:var(--ib);color:var(--a);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px}
+  .xempty .et{font-size:0.85rem;font-weight:600;color:var(--tx);margin-bottom:4px}
+  .xempty .ed{font-size:0.72rem;color:var(--nv);margin-bottom:12px}
+  .xempty .xbtn{font-size:0.75rem;padding:7px 14px}
+  /* sidebar + bottom-nav (mobile frame) */
+  .xframe{display:flex;gap:10px;width:100%;max-width:300px;align-items:stretch}
+  .xsidebar{width:46px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0}
+  .xsidebar .si{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:var(--nv)}
+  .xsidebar .si.on{background:var(--a);color:var(--bt)}
+  .xbnav{flex:1;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:8px;display:flex;align-items:flex-end;justify-content:space-around}
+  .xbnav .bi{font-size:0.8rem;color:var(--nv);text-align:center}
+  .xbnav .bi.on{color:var(--a)}
+  .xbnav .bi small{display:block;font-size:0.55rem;margin-top:2px;font-family:var(--f)}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ok);color:#052e16;padding:12px 22px;border-radius:12px;font-weight:600;font-size:0.88rem;z-index:200;opacity:0;transition:.3s}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .note{text-align:center;color:var(--sub);font-size:0.75rem;margin-top:24px;line-height:1.7}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>UI Studio <span>✦ เลือกลุค + component</span></h1>
+  <div class="h-right">
+    <label>ลุค: <select id="themeSel"></select></label>
+    <button class="btn" id="btnSelectAll">✓ เลือกทั้งหมด</button>
+    <button class="btn primary" id="btnExport">⬇ Export ที่เลือก (.html)</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="steps">
+    <div class="step"><span class="n">1</span><b>เลือกธีม</b> ด้านบน</div>
+    <div class="step"><span class="n">2</span>ติ๊ก<b> component</b> ที่อยากได้</div>
+    <div class="step"><span class="n">3</span>กด <b>Export</b> → ไฟล์ .html เปิดดูได้เลย</div>
+  </div>
+
+  <div class="cats" id="cats"></div>
+
+  <div class="bar">
+    <div class="lbl">เลือก component <b id="selCount">0</b> ตัว</div>
+    <div class="bar-actions"><button class="btn" id="btnSelectAll2">✓ เลือกทั้งหมด</button><button class="btn" id="btnClear">✕ ล้าง</button></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <p class="note">
+    ✨ ทุก component ใช้ CSS variables ชุดเดียวกับธีม — เปลี่ยนลุค = ทุกอย่างเปลี่ยนตามทันที<br>
+    Export ได้ไฟล์ .html ที่รวม CSS variables + component ที่เลือกทั้งหมด เปิดดู/ไปต่อในโปรเจคได้เลย
+  </p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   THEMES — 19 ลุค (เหมือน UI Style Picker)
+   ============================================================ */
+const THEMES = {
+  glass:{name:'Glassmorphism',t:{bg:'linear-gradient(135deg,#667eea 0%,#764ba2 55%,#f093fb 100%)',surface:'rgba(255,255,255,0.14)',text:'#ffffff',accent:'#ffffff',radius:'18px',font:"'Sarabun',sans-serif",shadow:'0 8px 24px rgba(0,0,0,0.35)',border:'1px solid rgba(255,255,255,0.3)',btnBg:'rgba(255,255,255,0.35)',btnText:'#ffffff',rowBg:'rgba(255,255,255,0.18)',rowText:'#ffffff',nav:'rgba(255,255,255,0.7)',iconBg:'rgba(255,255,255,0.3)'}},
+  dark:{name:'Dark Premium',t:{bg:'linear-gradient(180deg,#111118,#0a0a10)',surface:'#111118',text:'#f7f8f8',accent:'#7c6cff',radius:'12px',font:"'Sarabun',sans-serif",shadow:'0 8px 24px rgba(0,0,0,0.5)',border:'1px solid rgba(255,255,255,0.08)',btnBg:'#7c6cff',btnText:'#ffffff',rowBg:'rgba(255,255,255,0.03)',rowText:'#d0d6e0',nav:'#62666d',iconBg:'rgba(124,108,255,0.25)'}},
+  grad:{name:'Gradient Vibes',t:{bg:'linear-gradient(160deg,#ff6ec7,#7873f5,#4facfe)',surface:'rgba(255,255,255,0.22)',text:'#ffffff',accent:'#ffffff',radius:'16px',font:"'Sarabun',sans-serif",shadow:'0 8px 24px rgba(0,0,0,0.3)',border:'1px solid rgba(255,255,255,0.35)',btnBg:'rgba(255,255,255,0.4)',btnText:'#ffffff',rowBg:'rgba(255,255,255,0.3)',rowText:'#ffffff',nav:'rgba(255,255,255,0.8)',iconBg:'rgba(255,255,255,0.45)'}},
+  flat:{name:'Flat Minimal',t:{bg:'#f5f5f7',surface:'#ffffff',text:'#1d1d1f',accent:'#0071e3',radius:'8px',font:"'Sarabun',sans-serif",shadow:'0 2px 10px rgba(0,0,0,0.08)',border:'1px solid #f0f0f2',btnBg:'#0071e3',btnText:'#ffffff',rowBg:'#ffffff',rowText:'#1d1d1f',nav:'#86868b',iconBg:'#f0f0f5'}},
+  neu:{name:'Neumorphism',t:{bg:'#e4ebf1',surface:'#e4ebf1',text:'#3d4456',accent:'#4c7df0',radius:'14px',font:"'Sarabun',sans-serif",shadow:'5px 5px 12px #c4ccd6, -5px -5px 12px #ffffff',border:'none',btnBg:'#e4ebf1',btnText:'#5b6b8c',rowBg:'#e4ebf1',rowText:'#5b6b8c',nav:'#8a94a6',iconBg:'linear-gradient(145deg,#e9f0f6,#d9e0e8)'}},
+  brut:{name:'Brutalist',t:{bg:'#faf5e8',surface:'#faf5e8',text:'#111111',accent:'#ff4d00',radius:'0px',font:"'Space Grotesk','Sarabun',sans-serif",shadow:'3px 3px 0 #111111',border:'2px solid #111111',btnBg:'#111111',btnText:'#faf5e8',rowBg:'#faf5e8',rowText:'#111111',nav:'#111111',iconBg:'#ff4d00'}},
+  term:{name:'Terminal/Mono',t:{bg:'#0c0c0c',surface:'#0c0c0c',text:'#33ff66',accent:'#33ff66',radius:'0px',font:"'Courier New',monospace",shadow:'0 0 12px rgba(51,255,102,0.4)',border:'1px solid #1e2e1e',btnBg:'#1a1a1a',btnText:'#33ff66',rowBg:'#0c0c0c',rowText:'#9effb3',nav:'#33ff66',iconBg:'#1e2e1e'}},
+  play:{name:'Playful Rounded',t:{bg:'linear-gradient(180deg,#fff7ed,#ffedd5)',surface:'#ffffff',text:'#7c2d12',accent:'#ff9f43',radius:'18px',font:"'Sarabun',sans-serif",shadow:'0 2px 8px rgba(124,45,18,0.08)',border:'none',btnBg:'#ff9f43',btnText:'#ffffff',rowBg:'#ffffff',rowText:'#7c2d12',nav:'#9a7b4f',iconBg:'#ffedd5'}},
+  mat:{name:'Material You',t:{bg:'#f4f4f9',surface:'#ffffff',text:'#1c1c28',accent:'#6750a4',radius:'16px',font:"'Sarabun',sans-serif",shadow:'0 2px 10px rgba(0,0,0,0.08)',border:'none',btnBg:'#6750a4',btnText:'#ffffff',rowBg:'#ffffff',rowText:'#1c1c28',nav:'#67677d',iconBg:'#eaddff'}},
+  edit:{name:'Editorial Serif',t:{bg:'#faf9f6',surface:'#faf9f6',text:'#2d2a26',accent:'#2d2a26',radius:'2px',font:"Georgia,'Sarabun',serif",shadow:'none',border:'1px solid #e8e4da',btnBg:'#2d2a26',btnText:'#faf9f6',rowBg:'#faf9f6',rowText:'#2d2a26',nav:'#a5a094',iconBg:'#efece3'}},
+  stripe:{name:'Stripe',t:{bg:'#ffffff',surface:'#ffffff',text:'#061b31',accent:'#533afd',radius:'6px',font:"'Source Sans 3','Sarabun',sans-serif",shadow:'rgba(50,50,93,0.25) 0px 20px 40px -20px',border:'1px solid #e5edf5',btnBg:'#533afd',btnText:'#ffffff',rowBg:'#ffffff',rowText:'#273951',nav:'#64748d',iconBg:'rgba(83,58,253,0.08)'}},
+  linear:{name:'Linear',t:{bg:'#08090a',surface:'rgba(255,255,255,0.03)',text:'#f7f8f8',accent:'#5e6ad2',radius:'8px',font:"'Inter','Sarabun',sans-serif",shadow:'rgba(0,0,0,0.4) 0px 4px 12px',border:'1px solid rgba(255,255,255,0.08)',btnBg:'#5e6ad2',btnText:'#ffffff',rowBg:'rgba(255,255,255,0.03)',rowText:'#d0d6e0',nav:'#8a8f98',iconBg:'rgba(113,112,255,0.12)'}},
+  apple:{name:'Apple',t:{bg:'#f5f5f7',surface:'#ffffff',text:'#1d1d1f',accent:'#0071e3',radius:'12px',font:"system-ui,'Sarabun',sans-serif",shadow:'rgba(0,0,0,0.22) 3px 5px 30px 0px',border:'none',btnBg:'#0071e3',btnText:'#ffffff',rowBg:'#ffffff',rowText:'#1d1d1f',nav:'#86868b',iconBg:'#f0f0f5'}},
+  vercel:{name:'Vercel',t:{bg:'#ffffff',surface:'#ffffff',text:'#000000',accent:'#000000',radius:'6px',font:"'Inter','Sarabun',sans-serif",shadow:'0 2px 8px rgba(0,0,0,0.08)',border:'1px solid #eaeaea',btnBg:'#000000',btnText:'#ffffff',rowBg:'#ffffff',rowText:'#666666',nav:'#666666',iconBg:'#fafafa'}},
+  spotify:{name:'Spotify',t:{bg:'#121212',surface:'#181818',text:'#ffffff',accent:'#1db954',radius:'8px',font:"'Sarabun',sans-serif",shadow:'0 4px 16px rgba(0,0,0,0.5)',border:'none',btnBg:'#1db954',btnText:'#000000',rowBg:'#181818',rowText:'#b3b3b3',nav:'#b3b3b3',iconBg:'#1db954'}},
+  supabase:{name:'Supabase',t:{bg:'#171717',surface:'#1c1c1c',text:'#f8fafc',accent:'#3ecf8e',radius:'8px',font:"'Inter','Sarabun',sans-serif",shadow:'0 4px 16px rgba(0,0,0,0.4)',border:'1px solid #2a2a2a',btnBg:'#3ecf8e',btnText:'#171717',rowBg:'#1c1c1c',rowText:'#a3a3a3',nav:'#8a8f98',iconBg:'rgba(62,207,142,0.15)'}},
+  revolut:{name:'Revolut',t:{bg:'#0b0b12',surface:'#13131d',text:'#ffffff',accent:'#c6f432',radius:'14px',font:"'Sarabun',sans-serif",shadow:'0 6px 24px rgba(0,0,0,0.5)',border:'1px solid rgba(255,255,255,0.08)',btnBg:'#c6f432',btnText:'#0b0b12',rowBg:'#13131d',rowText:'#9a9ab0',nav:'#9a9ab0',iconBg:'linear-gradient(135deg,#f44,#c6f432)'}},
+  notion:{name:'Notion',t:{bg:'#ffffff',surface:'#f7f6f3',text:'#37352f',accent:'#37352f',radius:'6px',font:"Georgia,'Sarabun',serif",shadow:'none',border:'1px solid #e9e9e7',btnBg:'#37352f',btnText:'#ffffff',rowBg:'#f7f6f3',rowText:'#37352f',nav:'#9b9a97',iconBg:'#e9e9e7'}},
+  coinbase:{name:'Coinbase',t:{bg:'#ffffff',surface:'#ffffff',text:'#0a0b0d',accent:'#1652f0',radius:'8px',font:"'Sarabun',sans-serif",shadow:'0 2px 10px rgba(0,0,0,0.06)',border:'1px solid #eef0f3',btnBg:'#1652f0',btnText:'#ffffff',rowBg:'#ffffff',rowText:'#5b616e',nav:'#5b616e',iconBg:'#e8edfd'}},
+  airbnb:{name:'Airbnb',t:{bg:'#ffffff',surface:'#ffffff',text:'#222222',accent:'#ff385c',radius:'12px',font:"'Sarabun',sans-serif",shadow:'0 2px 12px rgba(0,0,0,0.08)',border:'1px solid #dddddd',btnBg:'#ff385c',btnText:'#ffffff',rowBg:'#ffffff',rowText:'#717171',nav:'#717171',iconBg:'#fff0f3'}},
+};
+
+/* ============================================================
+   COMPONENTS — data-driven, เพิ่มได้ง่าย
+   html = markup ตัวอย่าง, css = ส่วนของ component
+   ============================================================ */
+const COMPONENTS = [
+  {id:'button',cat:'พื้นฐาน',name:'ปุ่มหลากแบบ',icon:'🔘',html:`<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="xbtn">ปุ่มหลัก</button><button class="xbtn ghost">เส้นขอบ</button><button class="xbtn warn">ลบ</button></div>`,
+   css:`.xbtn{background:var(--bb);color:var(--bt);border:none;border-radius:var(--r);padding:8px 16px;font-size:0.82rem;font-weight:600;cursor:pointer}
+.xbtn.ghost{background:transparent;color:var(--a);border:1px solid var(--a)}
+.xbtn.warn{background:#dc2626;color:#fff}`},
+  {id:'search',cat:'พื้นฐาน',name:'ปุ่มค้นหา',icon:'🔍',html:`<div class="xsearch"><input placeholder="ค้นหาอะไรสักอย่าง..."><button class="go">ค้นหา</button></div>`,
+   css:`.xsearch{display:flex;align-items:center;gap:8px;background:var(--s);border:var(--bd);border-radius:var(--r);padding:7px 12px;box-shadow:var(--sh)}
+.xsearch input{flex:1;border:none;background:none;color:var(--tx);font-size:0.82rem;outline:none}
+.xsearch .go{background:var(--bb);color:var(--bt);border:none;border-radius:calc(var(--r)/2);padding:5px 11px;font-size:0.72rem;cursor:pointer;font-weight:600}`},
+  {id:'card',cat:'พื้นฐาน',name:'การ์ด',icon:'📇',html:`<div class="xcard"><div class="ct">บัตรสมาชิก</div><div class="cs">Premium Plan</div><div class="cb">สิทธิประโยชน์ครบทุกอย่าง สำหรับสมาชิกระดับสูง</div><button class="xbtn" style="width:100%">ดูรายละเอียด</button></div>`,
+   css:`.xcard{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:16px}
+.xcard .ct{font-size:0.9rem;font-weight:700;color:var(--tx);margin-bottom:3px}
+.xcard .cs{font-size:0.75rem;color:var(--nv);margin-bottom:10px}
+.xcard .cb{font-size:0.78rem;color:var(--rt);line-height:1.5;margin-bottom:10px}`},
+  {id:'nav',cat:'พื้นฐาน',name:'แถบนำทาง',icon:'🧭',html:`<div class="xnav"><span class="brand">แบรนด์</span><span style="display:flex;gap:12px"><a class="on">หน้าแรก</a><a>รายการ</a><a>บัญชี</a></span></div>`,
+   css:`.xnav{display:flex;align-items:center;justify-content:space-between;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:9px 14px}
+.xnav .brand{font-weight:700;color:var(--tx);font-size:0.85rem}
+.xnav a{color:var(--nv);font-size:0.76rem;text-decoration:none}
+.xnav a.on{color:var(--a);font-weight:700}`},
+  {id:'form',cat:'ฟอร์ม',name:'ฟอร์ม',icon:'📝',html:`<div class="xform"><label>อีเมล</label><input placeholder="you@email.com"><label>รหัสผ่าน</label><input type="password"><button class="xbtn" style="width:100%">เข้าสู่ระบบ</button></div>`,
+   css:`.xform{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:16px}
+.xform label{display:block;font-size:0.72rem;color:var(--nv);margin-bottom:3px}
+.xform input{width:100%;background:var(--rb);border:var(--bd);border-radius:calc(var(--r)/2);padding:7px 9px;color:var(--tx);font-size:0.8rem;margin-bottom:9px;outline:none}
+.xform input:focus{border-color:var(--a)}`},
+  {id:'table',cat:'ข้อมูล',name:'ตาราง',icon:'📊',html:`<div class="xtable"><table><tr><th>รายการ</th><th class="amt">จำนวน</th></tr><tr><td>เซเว่น</td><td class="amt">-฿89</td></tr><tr><td>เงินเดือน</td><td class="amt">+฿25,000</td></tr><tr><td>คาเฟ่</td><td class="amt">-฿120</td></tr></table></div>`,
+   css:`.xtable{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.xtable table{width:100%;border-collapse:collapse;font-size:0.76rem}
+.xtable th{background:var(--ib);color:var(--tx);padding:8px 11px;text-align:left}
+.xtable td{color:var(--rt);padding:7px 11px;border-top:var(--bd)}
+.xtable .amt{text-align:right;font-weight:600}`},
+  {id:'stat',cat:'ข้อมูล',name:'สถิติ',icon:'📈',html:`<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><div class="xstat"><div class="num">฿24,850</div><div class="lbl2">คงเหลือ</div></div><div class="xstat"><div class="num">+฿5,000</div><div class="lbl2">รายได้</div></div><div class="xstat"><div class="num">-฿1,200</div><div class="lbl2">รายจ่าย</div></div></div>`,
+   css:`.xstat{background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:14px;text-align:center}
+.xstat .num{font-size:1.2rem;font-weight:700;color:var(--tx)}
+.xstat .lbl2{font-size:0.7rem;color:var(--nv);margin-top:2px}`},
+  {id:'badge',cat:'ข้อมูล',name:'Badge สถานะ',icon:'🏷',html:`<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><span class="xbadge">หมวด</span><span class="xbadge ok">สำเร็จ</span><span class="xbadge warn">รอทำ</span></div>`,
+   css:`.xbadge{display:inline-flex;align-items:center;gap:5px;background:var(--ib);color:var(--a);border-radius:99px;padding:3px 11px;font-size:0.7rem;font-weight:600}
+.xbadge.ok{background:rgba(74,222,128,0.15);color:#86efac}
+.xbadge.warn{background:rgba(252,211,77,0.15);color:#fde047}`},
+  {id:'toggle',cat:'ข้อมูล',name:'Toggle',icon:'🎛',html:`<div style="display:flex;gap:12px;align-items:center"><div class="xtoggle on"></div><div class="xtoggle"></div></div>`,
+   css:`.xtoggle{width:42px;height:23px;border-radius:99px;background:var(--ib);position:relative;cursor:pointer;border:var(--bd)}
+.xtoggle::after{content:'';position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s}
+.xtoggle.on{background:var(--a)}
+.xtoggle.on::after{left:21px}`},
+  {id:'dropdown',cat:'ฟอร์ม',name:'Dropdown',icon:'🔽',html:`<div class="xdropdown"><button class="xdd-btn">เลือกหมวด <span>▾</span></button><div class="xdd-menu show"><div class="xdd-item">ทั้งหมด</div><div class="xdd-item">รายรับ</div><div class="xdd-item">รายจ่าย</div></div></div>`,
+   css:`.xdropdown{position:relative}
+.xdd-btn{width:100%;display:flex;justify-content:space-between;align-items:center;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:8px 12px;font-size:0.8rem;color:var(--tx);cursor:pointer}
+.xdd-menu{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,0.2);padding:4px}
+.xdd-item{padding:7px 10px;font-size:0.78rem;color:var(--rt);border-radius:calc(var(--r)/2);cursor:pointer}
+.xdd-item:hover{background:var(--ib);color:var(--tx)}`},
+  {id:'tabs',cat:'ฟอร์ม',name:'Tabs',icon:'🗂',html:`<div class="xtabs"><div class="xtab on">ทั้งหมด</div><div class="xtab">รายรับ</div><div class="xtab">รายจ่าย</div></div>`,
+   css:`.xtabs{display:flex;gap:4px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:4px}
+.xtab{flex:1;text-align:center;padding:7px 8px;font-size:0.75rem;color:var(--nv);border-radius:calc(var(--r)/2);cursor:pointer}
+.xtab.on{background:var(--bb);color:var(--bt);font-weight:600}`},
+  {id:'progress',cat:'ข้อมูล',name:'Progress Bar',icon:'📊',html:`<div class="xprog"><div class="pl"><span>ความคืบหน้า</span><span>75%</span></div><div class="ptrack"><div class="pfill" style="width:75%"></div></div></div>`,
+   css:`.xprog .pl{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--nv);margin-bottom:4px}
+.xprog .ptrack{height:8px;border-radius:99px;background:var(--ib);overflow:hidden}
+.xprog .pfill{height:100%;border-radius:99px;background:var(--a)}`},
+  {id:'avatar',cat:'ฟอร์ม',name:'Avatar + ชื่อ',icon:'👤',html:`<div class="xavatar"><div class="av">ต</div><div><div class="an">พี่เต้ย</div><div class="as">ออนไลน์</div></div></div>`,
+   css:`.xavatar{display:flex;gap:8px;align-items:center;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:10px 14px}
+.xavatar .av{width:38px;height:38px;border-radius:50%;background:var(--a);color:var(--bt);display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:700}
+.xavatar .an{font-size:0.82rem;font-weight:600;color:var(--tx)}
+.xavatar .as{font-size:0.7rem;color:var(--nv)}`},
+  {id:'toast',cat:'ฟอร์ม',name:'Toast แจ้งเตือน',icon:'🔔',html:`<div class="xtoast"><div class="ti">✓</div><div class="tm">บันทึกสำเร็จแล้ว!</div><div class="tx">✕</div></div>`,
+   css:`.xtoast{display:flex;align-items:center;gap:10px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:0 8px 24px rgba(0,0,0,0.25);padding:10px 14px}
+.xtoast .ti{width:28px;height:28px;border-radius:50%;background:var(--a);color:var(--bt);display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0}
+.xtoast .tm{flex:1;font-size:0.78rem;color:var(--tx)}
+.xtoast .tx{color:var(--nv);font-size:0.9rem;cursor:pointer}`},
+  {id:'alert',cat:'ฟอร์ม',name:'Alert แจ้งเตือน',icon:'⚠️',html:`<div class="xalert"><div class="ai">⚠️</div><div><div class="at">กรุณาตรวจสอบ</div><div class="ad">ยอดเงินไม่เพียงพอสำหรับการทำรายการนี้</div></div></div>`,
+   css:`.xalert{display:flex;align-items:flex-start;gap:10px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:12px 14px}
+.xalert .ai{font-size:1rem;flex-shrink:0}
+.xalert .at{font-size:0.82rem;font-weight:600;color:var(--tx);margin-bottom:2px}
+.xalert .ad{font-size:0.75rem;color:var(--rt);line-height:1.4}`},
+  {id:'empty',cat:'ข้อมูล',name:'Empty State',icon:'📭',html:`<div class="xempty"><div class="ei">📭</div><div class="et">ยังไม่มีรายการ</div><div class="ed">เริ่มเพิ่มรายการแรกของคุณ</div><button class="xbtn">+ เพิ่มเลย</button></div>`,
+   css:`.xempty{text-align:center;padding:22px 16px}
+.xempty .ei{width:52px;height:52px;border-radius:50%;background:var(--ib);color:var(--a);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px}
+.xempty .et{font-size:0.85rem;font-weight:600;color:var(--tx);margin-bottom:4px}
+.xempty .ed{font-size:0.72rem;color:var(--nv);margin-bottom:12px}`},
+  {id:'sidenav',cat:'นำทาง',name:'Sidebar + Bottom-nav',icon:'📱',html:`<div class="xframe"><div class="xsidebar"><div class="si on">🏠</div><div class="si">📊</div><div class="si">👤</div><div class="si">⚙️</div></div><div class="xbnav"><div class="bi on">🏠<small>บ้าน</small></div><div class="bi">📊<small>สถิติ</small></div><div class="bi">👤<small>บัญชี</small></div><div class="bi">⚙️<small>ตั้งค่า</small></div></div></div>`,
+   css:`.xframe{display:flex;gap:10px;align-items:stretch}
+.xsidebar{width:46px;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.xsidebar .si{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:var(--nv)}
+.xsidebar .si.on{background:var(--a);color:var(--bt)}
+.xbnav{flex:1;background:var(--s);border:var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:8px;display:flex;align-items:flex-end;justify-content:space-around}
+.xbnav .bi{font-size:0.8rem;color:var(--nv);text-align:center}
+.xbnav .bi.on{color:var(--a)}
+.xbnav .bi small{display:block;font-size:0.55rem;margin-top:2px}`},
+];
+
+/* ===== state ===== */
+let selCat='ทั้งหมด';
+const selected = new Set(['button','search','card','nav','form','table','stat']); // เลือกไว้คร่าวๆ
+
+/* ===== render ===== */
+function themeSelOptions(){
+  document.getElementById('themeSel').innerHTML = Object.entries(THEMES).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');
+  document.getElementById('themeSel').value = 'flat';
+}
+function cats(){
+  const c=['ทั้งหมด',...new Set(COMPONENTS.map(x=>x.cat))];
+  document.getElementById('cats').innerHTML=c.map(x=>`<button class="cat-btn ${x===selCat?'on':''}" data-cat="${x}">${x}</button>`).join('');
+  document.querySelectorAll('.cat-btn').forEach(b=>b.addEventListener('click',()=>{selCat=b.dataset.cat;render();}));
+}
+function render(){
+  cats();
+  const list=selCat==='ทั้งหมด'?COMPONENTS:COMPONENTS.filter(c=>c.cat===selCat);
+  const g=document.getElementById('grid');
+  g.innerHTML=list.map(c=>`
+    <div class="c-block ${selected.has(c.id)?'sel':''}" data-id="${c.id}">
+      <div class="c-head">
+        <div class="c-name">${c.icon} ${c.name} <span class="em">${c.cat}</span></div>
+        <div class="c-check"><input type="checkbox" ${selected.has(c.id)?'checked':''} data-id="${c.id}"><label>เลือก</label></div>
+      </div>
+      <div class="c-body"><div class="demo-scope" style="width:100%;display:flex;justify-content:center">${c.html}</div></div>
+      <button class="c-copy" data-code="${c.id}">📋 คัดลอก component นี้</button>
+    </div>`).join('');
+  g.querySelectorAll('.c-check input').forEach(cb=>cb.addEventListener('change',()=>{
+    if(cb.checked)selected.add(cb.dataset.id); else selected.delete(cb.dataset.id);
+    cb.closest('.c-block').classList.toggle('sel',cb.checked);
+    updateCount();
+  }));
+  g.querySelectorAll('.c-copy').forEach(btn=>btn.addEventListener('click',async()=>{
+    const c=COMPONENTS.find(x=>x.id===btn.dataset.code);
+    const code=makeComponentExport(c);
+    try{await navigator.clipboard.writeText(code);toast('📋 คัดลอก '+c.name+' แล้ว');}
+    catch(e){download('component-'+c.id+'.txt',code);toast('⬇ ดาวน์โหลดแล้ว');}
+  }));
+  updateCount();
+}
+function updateCount(){document.getElementById('selCount').textContent=selected.size;}
+
+/* ===== theme apply ===== */
+function applyTheme(key){
+  const t=THEMES[key].t, r=document.documentElement.style;
+  r.setProperty('--ui-bg',t.bg);r.setProperty('--ui-surface',t.surface);r.setProperty('--ui-text',t.text);
+  r.setProperty('--ui-accent',t.accent);r.setProperty('--ui-radius',t.radius);r.setProperty('--ui-font',t.font);
+  r.setProperty('--ui-shadow',t.shadow);r.setProperty('--ui-border',t.border);r.setProperty('--ui-btn-bg',t.btnBg);
+  r.setProperty('--ui-btn-text',t.btnText);r.setProperty('--ui-row-bg',t.rowBg);r.setProperty('--ui-row-text',t.rowText);
+  r.setProperty('--ui-nav',t.nav);r.setProperty('--ui-icon-bg',t.iconBg);
+}
+document.getElementById('themeSel').addEventListener('change',e=>applyTheme(e.target.value));
+
+/* ===== CSS variables block ===== */
+function cssVarsBlock(){
+  const t=THEMES[document.getElementById('themeSel').value].t;
+  return `:root{
+  --ui-bg:${t.bg};
+  --ui-surface:${t.surface};
+  --ui-text:${t.text};
+  --ui-accent:${t.accent};
+  --ui-radius:${t.radius};
+  --ui-font:${t.font};
+  --ui-shadow:${t.shadow};
+  --ui-border:${t.border};
+  --ui-btn-bg:${t.btnBg};
+  --ui-btn-text:${t.btnText};
+  --ui-row-bg:${t.rowBg};
+  --ui-row-text:${t.rowText};
+  --ui-nav:${t.nav};
+  --ui-icon-bg:${t.iconBg};
+}`;
+}
+function makeComponentExport(c){
+  return `/* ===== ${c.name} — ${THEMES[document.getElementById('themeSel').value].name} ===== */
+${cssVarsBlock()}
+${c.css}
+
+<!-- HTML -->
+${c.html}`;
+}
+
+/* ===== export selected -> .html ไฟล์เดียว ===== */
+document.getElementById('btnExport').addEventListener('click',()=>{
+  const thName=THEMES[document.getElementById('themeSel').value].name;
+  const chosen=COMPONENTS.filter(c=>selected.has(c.id));
+  if(chosen.length===0){toast('⚠️ ยังไม่ได้เลือก component');return;}
+  const cssBase=`.demo-scope{--b:var(--ui-bg);--s:var(--ui-surface);--tx:var(--ui-text);--a:var(--ui-accent);--r:var(--ui-radius);--f:var(--ui-font);--sh:var(--ui-shadow);--bd:var(--ui-border);--bb:var(--ui-btn-bg);--bt:var(--ui-btn-text);--rb:var(--ui-row-bg);--rt:var(--ui-row-text);--nv:var(--ui-nav);--ib:var(--ui-icon-bg)}\n.demo-scope *{font-family:var(--f)}\n`;
+  let css=chosen.map(c=>`/* ${c.name} */\n${c.css}`).join('\n\n');
+  let html=chosen.map(c=>`<div style="margin:14px;display:flex;justify-content:center">${c.html}</div>`).join('\n');
+  const full=`<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI Studio — ${thName} (${chosen.length} components)</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Sarabun',sans-serif;background:var(--ui-bg);color:var(--ui-text);margin:0;padding:24px}
+h2{font-family:var(--ui-font);opacity:.6;font-size:.9rem;font-weight:400}
+${cssVarsBlock()}
+${cssBase}
+${css}
+</style>
+</head>
+<body>
+<h2>UI Studio — ${thName} · ${chosen.length} components</h2>
+${html}
+</body>
+</html>`;
+  download('ui-studio-'+document.getElementById('themeSel').value+'.html', full);
+  toast('⬇ ดาวน์โหลด '+thName+' ('+chosen.length+' component) แล้ว!');
+});
+
+/* ===== select all / clear ===== */
+function setAll(v){COMPONENTS.forEach(c=>v?selected.add(c.id):selected.delete(c.id));render();}
+document.getElementById('btnSelectAll').addEventListener('click',()=>setAll(true));
+document.getElementById('btnSelectAll2').addEventListener('click',()=>setAll(true));
+document.getElementById('btnClear').addEventListener('click',()=>setAll(false));
+
+function download(filename,text){const b=new Blob([text],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=filename;a.click();URL.revokeObjectURL(a.href);}
+let tmr;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tmr);tmr=setTimeout(()=>t.classList.remove('show'),2600);}
+
+themeSelOptions(); applyTheme('flat'); render();
+</script>
+</body>
+</html>
